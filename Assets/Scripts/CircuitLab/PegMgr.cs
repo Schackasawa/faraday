@@ -15,7 +15,7 @@ public class PegMgr : MonoBehaviour {
     bool isOccupied = false;
     GameObject clone = null;
     GameObject original = null;
-
+    ICircuitComponent originalScript = null;
 
 	void Start () {
         clickSound.GetComponent<AudioSource>();
@@ -31,62 +31,39 @@ public class PegMgr : MonoBehaviour {
 
     void Update () {
         // If we have an original object referenced, and that object has been dropped, center it on this peg
-        if (original)
+        if (original && !originalScript.IsHeld())
         {
-            var rigidBody = original.GetComponent<Rigidbody>();
-            if (!rigidBody.isKinematic)
+            // Lock it to the board
+            Point start = GetCoordinates();
+            originalScript.Place(start);
+            original.transform.parent = transform;
+            original.gameObject.GetComponent<Rigidbody>().useGravity = false;
+            original.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+
+            // Disable box and sphere colliders so they don't interfere with the board and other components. 
+            // We still have a small capsule collider on each component so they can be picked up from the middle.
+            original.gameObject.GetComponent<BoxCollider>().enabled = false;
+            original.gameObject.GetComponent<SphereCollider>().enabled = false;
+
+            // Lock rotation to the nearest 90 degrees
+            Point end = LockRotation(original, original);
+
+            // Discard the placeholder
+            DestroyClone();
+
+            // Play the click sound
+            StartCoroutine(PlaySound(clickSound, clickStartTime));
+
+            // Add the component to our breadboard. This will also trigger a circuit simulation and
+            // activate any newly completed circuits.
+            var lab = GameObject.Find("CircuitLab").gameObject;
+            var script = lab.GetComponent<ICircuitLab>();
+            if (script != null)
             {
-                // Component has been dropped
-
-                // Lock it to the board
-                original.transform.parent = transform;
-                original.GetComponent<Rigidbody>().isKinematic = true;
-                original.GetComponent<Rigidbody>().useGravity = false;
-
-                // Force this object to be removed from the grabbers' grabbable lists before we
-                // disable the colliders, since they won't get an OnTriggerExit call to do it...
-                /*
-                var hand = GameObject.Find("AvatarGrabberRight").gameObject;
-                var grabber = hand.GetComponent<OVRGrabber>();
-                if (grabber != null)
-                {
-                    grabber.ForceRemoveGrabbable(original.GetComponent<OVRGrabbable>());
-                }
-                hand = GameObject.Find("AvatarGrabberLeft").gameObject;
-                grabber = hand.GetComponent<OVRGrabber>();
-                if (grabber != null)
-                {
-                    grabber.ForceRemoveGrabbable(original.GetComponent<OVRGrabbable>());
-                }
-                */
-
-                // Disable box and sphere colliders so they don't interfere with the board and other components. 
-                // We still have a small capsule collider on each component so they can be picked up from the middle.
-                original.GetComponent<BoxCollider>().enabled = false;
-                original.GetComponent<SphereCollider>().enabled = false;
-
-                // Lock rotation to the nearest 90 degrees
-                Point end = LockRotation(original, original);
-
-                // Discard the placeholder
-                DestroyClone();
-
-                // Play the click sound
-                StartCoroutine(PlaySound(clickSound, clickStartTime));
-
-                var lab = GameObject.Find("CircuitLab").gameObject;
-                var script = lab.GetComponent<ICircuitLab>();
-                if (script != null)
-                {
-                    Point start = GetCoordinates();
-
-                    // Add the component to our breadboard. This will also trigger a circuit simulation to
-                    // activate any newly completed circuits.
-                    script.AddComponent(original, start, end);
-                }
-
-                original = null;
+                script.AddComponent(original, start, end);
             }
+
+            original = null;
         }
 
         // If we have a clone, make sure the rotation changes when the user twists the component
@@ -261,7 +238,7 @@ public class PegMgr : MonoBehaviour {
             return;
         }
 
-        if (!isOccupied && other.name.StartsWith("Component") && (other.gameObject.transform.parent == null))
+        if (!isOccupied && other.name.StartsWith("Component"))
         {
             int componentLength = 1;
             if (other.transform.name.Contains("LongWire"))
@@ -287,12 +264,14 @@ public class PegMgr : MonoBehaviour {
 
             // Remember which object we are cloning
             original = other.gameObject;
+            originalScript = original.GetComponent<ICircuitComponent>();
 
             // Create a clone of the object
             clone = Instantiate(other.gameObject);
             clone.GetComponent<Rigidbody>().detectCollisions = false;
+            originalScript.SetClone();
 
-            // Make the clone transparent
+            // Make the clone translucent
             //var rend = clone.gameObject.GetComponent<Renderer>();
             //var color = rend.material.color;
             //rend.material.color = new Color(color.r, color.g, color.b, 0.5f);

@@ -17,6 +17,9 @@ public interface ICircuitComponent
     void SetShortCircuit(bool shortCircuit, bool forward);
     void SetVoltage(double newVoltage);
     void SetCurrent(double newCurrent);
+    void SetClone();
+    void Place(Point start);
+    bool IsHeld();
     bool IsClosed();
     void Toggle();
 }

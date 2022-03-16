@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Switch : MonoBehaviour, /*OVRGrabbable, */ICircuitComponent {
+public class Switch : MonoBehaviour, ICircuitComponent {
 
     public GameObject pivot;
     public GameObject labelVoltage;
     public GameObject labelCurrent;
 
+    private bool isHeld = false;
+    private bool isPlaced = false;
+    private Point startingPeg;
     bool isShortCircuit = false;
     bool isClosed = false;
     double voltage = 0f;
@@ -15,6 +18,21 @@ public class Switch : MonoBehaviour, /*OVRGrabbable, */ICircuitComponent {
 
     void Update () {
 
+    }
+
+    public bool IsHeld()
+    {
+        return isHeld;
+    }
+
+    public void SetClone()
+    {
+    }
+
+    public void Place(Point start)
+    {
+        isPlaced = true;
+        startingPeg = start;
     }
 
     public void SetActive(bool active, bool forward)
@@ -122,35 +140,31 @@ public class Switch : MonoBehaviour, /*OVRGrabbable, */ICircuitComponent {
         }
     }
 
-    /*
-    Point GetParentCoordinates()
+    public void SelectEntered()
     {
-        string name = transform.parent.name.Substring(4);
+        isHeld = true;
 
-        int row = int.Parse(name.Substring(0, name.IndexOf('_')));
-        int col = int.Parse(name.Substring(name.IndexOf('_') + 1));
+        // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
+        GetComponent<BoxCollider>().enabled = true;
+        GetComponent<SphereCollider>().enabled = true;
 
-        return new Point(col, row);
-    }
-
-    override public void GrabBegin(OVRGrabber hand, Collider grabPoint)
-    {
-        if (transform.parent && transform.parent.name.Contains("Peg"))
+        if (isPlaced)
         {
-            GetComponent<BoxCollider>().enabled = true;
-            GetComponent<SphereCollider>().enabled = true;
-            GetComponent<Rigidbody>().isKinematic = false;
-            GetComponent<Rigidbody>().useGravity = true;
-
-            // Remove this object from the board state
-            Point start = GetParentCoordinates();
             var lab = GameObject.Find("CircuitLab").gameObject;
             var script = lab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, start);
+            script.RemoveComponent(this.gameObject, startingPeg);
             transform.parent = null;
-        }
 
-        base.GrabBegin(hand, grabPoint);
+            isPlaced = false;
+        }
     }
-    */
+
+    public void SelectExited()
+    {
+        isHeld = false;
+
+        // Make sure gravity is enabled any time we release the object
+        GetComponent<Rigidbody>().isKinematic = false;
+        GetComponent<Rigidbody>().useGravity = true;
+    }
 }
