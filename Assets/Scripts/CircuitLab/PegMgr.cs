@@ -9,8 +9,9 @@ public class PegMgr : MonoBehaviour {
 
     public float pegInterval = 0.1f;
 
-    float wirePositionOffset = -1.64f;
-    float longPositionOffset = -3.34f;
+    // Offset from the center of each short and long component
+    float shortPositionOffset = -2.5f;
+    float longPositionOffset = -5.0f;
 
     bool isOccupied = false;
     GameObject clone = null;
@@ -85,7 +86,7 @@ public class PegMgr : MonoBehaviour {
 
     Point LockRotation(GameObject target, GameObject reference)
     {
-        float offset = wirePositionOffset;
+        float offset = shortPositionOffset;
         int pegOffset = 1;
         if (reference.transform.name.Contains("LongWire"))
         {
@@ -133,44 +134,31 @@ public class PegMgr : MonoBehaviour {
 
         // Lock the clone so that it points to that endpoint
         var rotation = target.transform.localEulerAngles;
-        var position = target.transform.localPosition;
-        rotation.x = 0;
+        var position = transform.localPosition;
+        rotation.x = -90;
         rotation.y = 0;
-        position.z = 0;
         if (closest == north)
         {
             rotation.z = 0;
-
-            position.y = offset;
-            position.x = 0;
-
+            position.z = -offset;
             end.y += pegOffset;
         }
         else if (closest == east)
         {
             rotation.z = 90;
-
-            position.y = 0;
             position.x = -offset;
-
             end.x += pegOffset;
         }
         else if (closest == south)
         {
             rotation.z = 180;
-
-            position.y = -offset;
-            position.x = 0;
-
+            position.z = offset;
             end.y -= pegOffset;
         }
         else
         {
             rotation.z = 270;
-
-            position.y = 0;
             position.x = offset;
-
             end.x -= pegOffset;
         }
         target.transform.localEulerAngles = rotation;
@@ -220,7 +208,7 @@ public class PegMgr : MonoBehaviour {
         myLine.transform.position = start;
         myLine.AddComponent<LineRenderer>();
         LineRenderer lr = myLine.GetComponent<LineRenderer>();
-        lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+        lr.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
         lr.startColor = color;
         lr.endColor = color;
         lr.startWidth = 0.02f;
