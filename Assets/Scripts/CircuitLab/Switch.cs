@@ -153,7 +153,6 @@ public class Switch : MonoBehaviour, ICircuitComponent {
             var lab = GameObject.Find("CircuitLab").gameObject;
             var script = lab.GetComponent<ICircuitLab>();
             script.RemoveComponent(this.gameObject, startingPeg);
-            transform.parent = null;
 
             isPlaced = false;
         }
