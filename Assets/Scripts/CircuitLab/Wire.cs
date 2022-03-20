@@ -89,7 +89,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
         }
     }
 
-    private void SetElectronColor(Color32 glowColor, Color emissionColor, Color32 albedoColor)
+    private void SetElectronColor(Color32 glowColor, Color emissionColor, Color32 baseColor)
     {
         foreach (Transform child in transform)
         {
@@ -101,7 +101,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
                 Renderer renderer = child.GetComponent<Renderer>();
                 Material mat = renderer.material;
                 mat.SetColor("_EmissionColor", emissionColor);
-                mat.SetColor("_Color", albedoColor);
+                mat.SetColor("_BaseColor", baseColor);
             }
         }
     }
@@ -205,9 +205,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
         if (newCurrent <= 0.0000001)
         {
             isActive = false;
-            /*
             DeactivateElectrons();
-            */
 
             // Hide the labels
             labelVoltage.gameObject.SetActive(false);

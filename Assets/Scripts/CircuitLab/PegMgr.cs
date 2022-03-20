@@ -257,7 +257,8 @@ public class PegMgr : MonoBehaviour {
             // Create a clone of the object
             clone = Instantiate(other.gameObject);
             clone.GetComponent<Rigidbody>().detectCollisions = false;
-            originalScript.SetClone();
+            var cloneScript = clone.GetComponent<ICircuitComponent>();
+            cloneScript.SetClone();
 
             // Make the clone translucent
             //var rend = clone.gameObject.GetComponent<Renderer>();
