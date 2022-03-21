@@ -11,7 +11,12 @@ public class Wire : MonoBehaviour, ICircuitComponent
     public Vector3 endPosition = new Vector3(0, -0.04f, 0);
     public GameObject labelVoltage;
     public GameObject labelCurrent;
+    public Color normalEmissionColor;
+    public Color shortEmissionColor;
+    public float emissionIntensity;
 
+    private Color32 normalBaseColor = new Color32(56, 206, 76, 255);
+    private Color32 shortBaseColor = new Color32(88, 18, 18, 255);
     bool isPlaced = false;
     bool isHeld = false;
     bool isClone = false;
@@ -89,18 +94,15 @@ public class Wire : MonoBehaviour, ICircuitComponent
         }
     }
 
-    private void SetElectronColor(Color32 glowColor, Color emissionColor, Color32 baseColor)
+    private void SetElectronColor(Color emissionColor, Color32 baseColor)
     {
         foreach (Transform child in transform)
         {
             if (child.name.StartsWith("Electron"))
             {
-                var glow = child.Find("Glow");
-                glow.GetComponent<Light>().color = glowColor;
-
                 Renderer renderer = child.GetComponent<Renderer>();
                 Material mat = renderer.material;
-                mat.SetColor("_EmissionColor", emissionColor);
+                mat.SetColor("_EmissionColor", emissionColor * Mathf.Pow(2, emissionIntensity));
                 mat.SetColor("_BaseColor", baseColor);
             }
         }
@@ -115,7 +117,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
             speed = normalCircuitSpeed;
 
             // Change electrons to green
-            SetElectronColor(new Color32(63, 186, 109, 255), new Color(.1f, .6f, .2f, .6f), new Color32(56, 206, 76, 255));
+            SetElectronColor(normalEmissionColor, normalBaseColor);
         }
 
         // Show/hide the labels
@@ -170,7 +172,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
             speed = shortCircuitSpeed;
 
             // Change electrons to red
-            SetElectronColor(new Color32(186, 63, 63, 255), new Color(.8f, .2f, .2f, .8f), new Color32(88, 18, 18, 255));
+            SetElectronColor(shortEmissionColor, shortBaseColor);
 
             // Hide the labels
             labelVoltage.gameObject.SetActive(false);

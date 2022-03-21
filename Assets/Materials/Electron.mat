@@ -22,11 +22,11 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Electron
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_ShaderKeywords: _EMISSION
+  m_ShaderKeywords: _EMISSION _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
@@ -249,8 +249,8 @@ Material:
     - _ShadowCull: 2
     - _ShadowMIPbias: 0
     - _ShadowStrength: 1
-    - _Smoothness: 0.924
-    - _SmoothnessTextureChannel: 0
+    - _Smoothness: 0
+    - _SmoothnessTextureChannel: 1
     - _Snow: 0
     - _SnowBumpMacro: 0.1
     - _SnowBumpMicro: 0.08
@@ -321,8 +321,8 @@ Material:
     - maxDist: 10
     - minDist: 1
     m_Colors:
-    - _BaseColor: {r: 0.22004756, g: 0.8088235, b: 0.2971973, a: 1}
-    - _Color: {r: 0.22004753, g: 0.8088235, b: 0.29719728, a: 1}
+    - _BaseColor: {r: 0.22004753, g: 0.8088235, b: 0.29719728, a: 0.43137255}
+    - _Color: {r: 0.2200475, g: 0.8088235, b: 0.29719725, a: 0.43137255}
     - _Color2: {r: 1, g: 1, b: 1, a: 1}
     - _CurvatureMultOffset: {r: 0, g: 0, b: 0, a: 0}
     - _CutoffEdgeGlow: {r: 0, g: 0, b: 0, a: 0.02}
@@ -330,7 +330,7 @@ Material:
     - _DetailSpecGloss: {r: 1, g: 1, b: 1, a: 1}
     - _DiffuseScatteringColor: {r: 0, g: 0, b: 0, a: 0}
     - _DiffuseScatteringColor2: {r: 0, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 0.1, g: 0.6, b: 0.2, a: 1}
+    - _EmissionColor: {r: 0, g: 8, b: 0, a: 1}
     - _GlitterColor: {r: 0.8, g: 0.8, b: 0.8, a: 0.2}
     - _GlitterColor2: {r: 0.8, g: 0.8, b: 0.8, a: 0.2}
     - _SnowColorAndCoverage: {r: 1, g: 1, b: 1, a: 1}
