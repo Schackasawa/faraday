@@ -6,7 +6,6 @@ public class Bulb : MonoBehaviour, ICircuitComponent {
     public GameObject labelResistance;
     public GameObject labelCurrent;
     public GameObject filament;
-    public GameObject glow;
 
     bool isPlaced = false;
     bool isHeld = false;
@@ -97,20 +96,14 @@ public class Bulb : MonoBehaviour, ICircuitComponent {
 
     private void DeactivateLight()
     {
-        Light light = glow.GetComponent<Light>();
-
-        // Cool down the filament and deactivate the light object
+        // Cool down the filament by deactivating the emission
         filament.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
-        light.enabled = false;
     }
 
     private void ActivateLight()
     {
-        Light light = glow.GetComponent<Light>();
-
-        // Heat up the filament and activate the light object
+        // Heat up the filament by activating the emission
         filament.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
-        light.enabled = true;
     }
 
     public void SetShortCircuit(bool shortCircuit, bool forward)
@@ -137,34 +130,21 @@ public class Bulb : MonoBehaviour, ICircuitComponent {
     {
         current = newCurrent;
 
-        // If we don't have a significant positive current, then we are inactive, even if
-        // we are technically part of an active circuit
-        if (newCurrent <= 0.0000001)
-        {
-            isActive = false;
-            DeactivateLight();
+        // Update label text
+        labelCurrent.GetComponent<TextMesh>().text = (current * 1000f).ToString("0.##") + "mA";
 
-            // Hide the labels
-            labelResistance.gameObject.SetActive(false);
-            labelCurrent.gameObject.SetActive(false);
-        }
-        else
-        {
-            // Update label text
-            labelCurrent.GetComponent<TextMesh>().text = (current * 1000f).ToString("0.##") + "mA";
+        // Calculate light intensity based on current
+        float maxCurrent = 0.01f;
+        float maxIntensity = 5.0f;
+        float minIntensity = 3.0f;
+        float pctCurrent = ((float)current > maxCurrent ? maxCurrent : (float)current) / maxCurrent;
+        intensity = (pctCurrent * (maxIntensity - minIntensity)) + minIntensity;
+        Debug.Log("Intensity = " + intensity + ", current = " + current);
 
-            // Update light intensity
-            intensity = (((float)current * 1000f) / 10.0f);
-
-            // Set the filament emission color
-            Color baseColor = Color.yellow;
-            Color finalColor = baseColor * Mathf.LinearToGammaSpace((float)intensity * 0.5f);
-            filament.GetComponent<Renderer>().material.SetColor("_EmissionColor", finalColor);
-
-            // Set the light object's intensity
-            Light light = glow.GetComponent<Light>();
-            light.intensity = (float)intensity;
-        }
+        // Set the filament emission color and intensity
+        Color baseColor = Color.yellow;
+        Color finalColor = baseColor * Mathf.Pow(2, intensity);
+        filament.GetComponent<Renderer>().material.SetColor("_EmissionColor", finalColor);
     }
 
     public void SelectEntered()
