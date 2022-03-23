@@ -13,6 +13,9 @@ public class PegMgr : MonoBehaviour {
     float shortPositionOffset = -2.5f;
     float longPositionOffset = -5.0f;
 
+    // Height of each placed component above the breadboard
+    float componentHeight = 0.5f;
+
     bool isOccupied = false;
     GameObject clone = null;
     GameObject original = null;
@@ -134,12 +137,14 @@ public class PegMgr : MonoBehaviour {
 
         // Lock the clone so that it points to that endpoint
         var rotation = target.transform.localEulerAngles;
-        var position = transform.localPosition;
+        var position = target.transform.localPosition;
         rotation.x = -90;
         rotation.y = 0;
+        position.y = componentHeight;
         if (closest == north)
         {
             rotation.z = 0;
+            position.x = 0;
             position.z = -offset;
             end.y += pegOffset;
         }
@@ -147,11 +152,13 @@ public class PegMgr : MonoBehaviour {
         {
             rotation.z = 90;
             position.x = -offset;
+            position.z = 0;
             end.x += pegOffset;
         }
         else if (closest == south)
         {
             rotation.z = 180;
+            position.x = 0;
             position.z = offset;
             end.y -= pegOffset;
         }
@@ -159,6 +166,7 @@ public class PegMgr : MonoBehaviour {
         {
             rotation.z = 270;
             position.x = offset;
+            position.z = 0;
             end.x -= pegOffset;
         }
         target.transform.localEulerAngles = rotation;
