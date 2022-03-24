@@ -9,11 +9,14 @@ public class HandPresence : MonoBehaviour
     public InputDeviceCharacteristics controllerCharacteristics;
     public List<GameObject> controllerPrefabs;
     public GameObject handModelPrefab;
+    public GameObject pinchCollider;
 
     private InputDevice targetDevice;
     private GameObject spawnedController;
     private GameObject spawnedHandModel;
     private Animator handAnimator;
+
+    private bool pinchActive = false;
 
     // Start is called before the first frame update
     void Start()
@@ -80,14 +83,19 @@ public class HandPresence : MonoBehaviour
         }
         else
         {
+            // Find out if the hand is pinching (trigger pressed but grip released)
+            bool triggerPressed;
+            bool gripPressed;
+            targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out triggerPressed);
+            targetDevice.TryGetFeatureValue(CommonUsages.gripButton, out gripPressed);
+
+            // Activate Pinch Collider so we can detect pinch collisions with other objects
+            pinchCollider.gameObject.SetActive(triggerPressed && !gripPressed);
+
             /*
             bool primaryButtonValue;
             if (targetDevice.TryGetFeatureValue(CommonUsages.primaryButton, out primaryButtonValue) && primaryButtonValue)
                 Debug.Log("Pressing Primary Button");
-
-            float triggerValue;
-            if (targetDevice.TryGetFeatureValue(CommonUsages.trigger, out triggerValue) && triggerValue > 0.1f)
-                Debug.Log("Trigger pressed " + triggerValue);
 
             Vector2 primary2DAxisValue;
             if (targetDevice.TryGetFeatureValue(CommonUsages.primary2DAxis, out primary2DAxisValue) && primary2DAxisValue != Vector2.zero)

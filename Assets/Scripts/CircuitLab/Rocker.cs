@@ -29,9 +29,7 @@ public class Rocker : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!cooldownActive && 
-            other.gameObject.name.Contains("index") &&
-            transform.parent.parent && 
-            transform.parent.parent.name.Contains("Peg"))
+            other.gameObject.name.Contains("Pinch"))
         {
             // Find our parent and toggle its state
             var script = transform.parent.GetComponent<ICircuitComponent>();
