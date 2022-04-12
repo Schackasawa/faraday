@@ -7,10 +7,10 @@ TerrainLayer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: layer_MRLFGenericRockGrass_DiffuseMRLFGenericRockGrass_Normal3d3aba195e4d26ee
-  m_DiffuseTexture: {fileID: 2800000, guid: 4e378473470043248af9eee2da286ac1, type: 3}
-  m_NormalMapTexture: {fileID: 2800000, guid: eb27eae67d189cb499cceefbbf8d8616, type: 3}
+  m_DiffuseTexture: {fileID: 2800000, guid: 7a65ad496b392f04c930c675e446e935, type: 3}
+  m_NormalMapTexture: {fileID: 2800000, guid: 69ccd7b6580105545993617c741e294f, type: 3}
   m_MaskMapTexture: {fileID: 0}
-  m_TileSize: {x: 15, y: 15}
+  m_TileSize: {x: 3, y: 3}
   m_TileOffset: {x: 0, y: 0}
   m_Specular: {r: 0, g: 0, b: 0, a: 0}
   m_Metallic: 0
