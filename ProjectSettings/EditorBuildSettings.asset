@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Faraday.unity
+    path: Assets/Scenes/Basic.unity
     guid: c61f303dd820af947a3079b79daa6ef8
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 067be370b26c88341bb5a5b496448979, type: 2}
