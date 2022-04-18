@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Dispenser : MonoBehaviour
 {
+    float xSpeed = 90f;
     float growDelay = 0.1f;
     float growTime = 0.5f;
     int numDispensed = 1;
@@ -17,7 +18,8 @@ public class Dispenser : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        // Rotate the object
+        transform.Rotate(Vector3.up, xSpeed * Time.deltaTime);
     }
 
     void OnTriggerExit(Collider other)
