@@ -750,7 +750,6 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         yield return new WaitForSeconds(delay);
 
         float startVolume = source.volume;
-        Debug.Log("Start volume = " + startVolume);
 
         while (source.volume > 0)
         {

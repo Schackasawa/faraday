@@ -139,7 +139,6 @@ public class Bulb : MonoBehaviour, ICircuitComponent {
         float minIntensity = 3.0f;
         float pctCurrent = ((float)current > maxCurrent ? maxCurrent : (float)current) / maxCurrent;
         intensity = (pctCurrent * (maxIntensity - minIntensity)) + minIntensity;
-        Debug.Log("Intensity = " + intensity + ", current = " + current);
 
         // Set the filament emission color and intensity
         Color baseColor = Color.yellow;
