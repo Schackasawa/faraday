@@ -16,8 +16,6 @@ public class HandPresence : MonoBehaviour
     private GameObject spawnedHandModel;
     private Animator handAnimator;
 
-    private bool pinchActive = false;
-
     // Start is called before the first frame update
     void Start()
     {
