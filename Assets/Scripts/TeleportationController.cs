@@ -18,7 +18,6 @@ public class TeleportationController : MonoBehaviour
             rightTeleportRay.gameObject.SetActive(isActive);
             reticle.SetActive(isActive);
         }
-
     }
 
 

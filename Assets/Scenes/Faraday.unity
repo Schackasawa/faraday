@@ -3389,6 +3389,8 @@ GameObject:
   - component: {fileID: 353833722}
   - component: {fileID: 353833724}
   - component: {fileID: 353833725}
+  - component: {fileID: 353833726}
+  - component: {fileID: 353833727}
   m_Layer: 0
   m_Name: XR Origin
   m_TagString: Untagged
@@ -3492,6 +3494,43 @@ MonoBehaviour:
   rightTeleportRay: {fileID: 877195972}
   teleportActivationButton: 6
   reticle: {fileID: 2004623829}
+--- !u!114 &353833726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 353833719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d93c4b7fb353fb847b666b51ddda935a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1
+  inputSource: 4
+  gravity: -9.81
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2147483647
+  additionalHeight: 0.2
+--- !u!143 &353833727
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 353833719}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 2
+  m_Radius: 0.15
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &357127629
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7969,7 +8008,7 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  m_SmoothMovement: 1
+  m_SmoothMovement: 0
   m_FollowTightness: 10
   m_SnapThresholdDistance: 10
   m_Reticle: {fileID: 2004623829}
