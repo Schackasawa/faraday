@@ -1193,6 +1193,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6717607269939057648, guid: e60023a8d00226c4db1b141fe5ab49f0, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6717607269939057652, guid: e60023a8d00226c4db1b141fe5ab49f0, type: 3}
       propertyPath: m_Name
       value: ComponentMotor
@@ -4431,6 +4435,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 429706817721803664, guid: 7d2bd45096e92694c82564ff9724e7a8, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 429706817721803670, guid: 7d2bd45096e92694c82564ff9724e7a8, type: 3}
       propertyPath: m_Name
       value: ComponentLongWire
@@ -6299,6 +6307,10 @@ PrefabInstance:
     - target: {fileID: 7864826705651393962, guid: 88162bcd37bb7bf4c85bc1c19bfdb49a, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7864826705920570209, guid: 88162bcd37bb7bf4c85bc1c19bfdb49a, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7864826705920570210, guid: 88162bcd37bb7bf4c85bc1c19bfdb49a, type: 3}
       propertyPath: m_Name
@@ -9144,6 +9156,10 @@ PrefabInstance:
     - target: {fileID: 9209728374537748181, guid: c90174c0212bb4442bba08b742838a98, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9209728374537748191, guid: c90174c0212bb4442bba08b742838a98, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9209728374596176676, guid: c90174c0212bb4442bba08b742838a98, type: 3}
       propertyPath: m_Layer
@@ -12196,6 +12212,10 @@ PrefabInstance:
     - target: {fileID: 7148374251033275212, guid: 583df63c6626b1041ac7d1fe7ad071cd, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148374251033275255, guid: 583df63c6626b1041ac7d1fe7ad071cd, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 583df63c6626b1041ac7d1fe7ad071cd, type: 3}
@@ -16837,6 +16857,10 @@ PrefabInstance:
     - target: {fileID: 5575501952818378301, guid: fd2d0936c1e6dc846941d3f95c57d328, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575501952818378305, guid: fd2d0936c1e6dc846941d3f95c57d328, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5575501953174974848, guid: fd2d0936c1e6dc846941d3f95c57d328, type: 3}
       propertyPath: m_Layer
