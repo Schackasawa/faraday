@@ -16,7 +16,6 @@ public class HandPresence : MonoBehaviour
     private GameObject spawnedHandModel;
     private Animator handAnimator;
 
-    // Start is called before the first frame update
     void Start()
     {
         TryInitialize();
@@ -89,16 +88,6 @@ public class HandPresence : MonoBehaviour
 
             // Activate Pinch Collider so we can detect pinch collisions with other objects
             pinchCollider.gameObject.SetActive(triggerPressed && !gripPressed);
-
-            /*
-            bool primaryButtonValue;
-            if (targetDevice.TryGetFeatureValue(CommonUsages.primaryButton, out primaryButtonValue) && primaryButtonValue)
-                Debug.Log("Pressing Primary Button");
-
-            Vector2 primary2DAxisValue;
-            if (targetDevice.TryGetFeatureValue(CommonUsages.primary2DAxis, out primary2DAxisValue) && primary2DAxisValue != Vector2.zero)
-                Debug.Log("Primary Touchpad " + primary2DAxisValue);
-            */
 
             if (showController)
             {
