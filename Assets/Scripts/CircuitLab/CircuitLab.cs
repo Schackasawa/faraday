@@ -706,6 +706,10 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
             case CircuitComponentType.Battery:
                 entities.Add(new VoltageSource("V" + name, mid, end, 0f));
                 entities.Add(new VoltageSource(name, mid, start, 10f));
+
+                // Add a lossless wire to the battery. SpiceSharp isn't happy if the circuit doesn't have at least
+                // one line, so this makes sure that even circuits built entirely of resistors simulate properly.
+                entities.Add(new LosslessTransmissionLine("L" + name, end, name + "a", name + "a", end));
                 break;
             case CircuitComponentType.Bulb:
                 // Treat bulbs as simple resistors
