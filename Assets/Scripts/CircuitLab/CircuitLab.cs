@@ -22,7 +22,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
 
     public GameObject pegTemplate = null;
     public float pegInterval = 0.1f;
-    public float pegHeight = 0.505f;
+    public float pegHeight = 0.45f;
     public float pegScale = .03f;
 
     void Start()
@@ -52,8 +52,8 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
 
         // Get bounds of breadboard
         var boardObject = GameObject.Find("Breadboard").gameObject;
-        var coll = boardObject.GetComponent<MeshFilter>().mesh;
-        var size = coll.bounds.size;
+        var mesh = boardObject.GetComponent<MeshFilter>().mesh;
+        var size = mesh.bounds.size;
         var boardWidth = size.x * boardObject.transform.localScale.x;
         var boardHeight = size.z * boardObject.transform.localScale.z;
         //Debug.Log("Board Dimensions = " + boardWidth.ToString() + " x " + boardHeight.ToString());
