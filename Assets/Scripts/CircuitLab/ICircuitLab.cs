@@ -20,6 +20,7 @@ public interface ICircuitComponent
     void SetClone();
     void Place(Point start);
     bool IsHeld();
+    bool IsPlaced();
     bool IsClosed();
     void Toggle();
 }

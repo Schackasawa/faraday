@@ -37,6 +37,17 @@ public class PegMgr : MonoBehaviour {
         // If we have an original object referenced, and that object has been dropped, center it on this peg
         if (original && !originalScript.IsHeld())
         {
+            // If the component has already been placed, it must have temporarily been cloned on two different
+            // pegs. This can happen in high-velocity situations when a component enters the collider of a
+            // second peg before Unity invokes the exit callback from the collider of the first peg. In this,
+            // case, just destroy this clone since the component has already been locked to another location.
+            if (originalScript.IsPlaced())
+            {
+                DestroyClone();
+                original = null;
+                return;
+            }
+
             // Lock it to the board
             Point start = GetCoordinates();
             originalScript.Place(start);

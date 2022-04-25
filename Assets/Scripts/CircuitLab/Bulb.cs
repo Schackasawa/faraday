@@ -25,6 +25,11 @@ public class Bulb : MonoBehaviour, ICircuitComponent {
         return isHeld;
     }
 
+    public bool IsPlaced()
+    {
+        return isPlaced;
+    }
+
     public void SetClone()
     {
     }

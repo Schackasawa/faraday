@@ -136,8 +136,10 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 if (pegB != null)
                 {
                     // Remove it from each of the pegs it's attached to
-                    pegA.Components.Remove(found);
-                    pegB.Components.Remove(found);
+                    if (!pegA.Components.Remove(found))
+                        Debug.Log("Failed to remove component from Peg A!");
+                    if (!pegB.Components.Remove(found))
+                        Debug.Log("Failed to remove component from Peg B!");
 
                     // Remove it from the master list as well
                     board.Components.Remove(found);

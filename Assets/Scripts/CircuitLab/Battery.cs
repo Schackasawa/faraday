@@ -18,6 +18,11 @@ public class Battery : MonoBehaviour, ICircuitComponent
         return isHeld;
     }
 
+    public bool IsPlaced()
+    {
+        return isPlaced;
+    }
+
     public void SetClone()
     {
     }
