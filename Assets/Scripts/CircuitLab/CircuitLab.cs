@@ -19,19 +19,34 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     public float shortSound2StartTime = 0f;
     public float fadeDelay = 2f;
     public float fadeTime = 2;
+    public GameObject handle;
 
     public GameObject pegTemplate = null;
     public float pegInterval = 0.1f;
     public float pegHeight = 0.45f;
-    public float pegScale = .03f;
+    public Vector3 pegScale;
+
+    private float yHandleStart = 0f;
+    private float yStart = 0f;
 
     void Start()
     {
+        // Record the initial height of the handle so we can move the whole board when the handle moves
+        yHandleStart = handle.transform.position.y;
+        yStart = transform.localPosition.y;
+
         // Create a new board object to hold all breadboard state
         board = new Board(numRows, numCols);
 
         // Create peg objects at regular intervals across the board
         CreatePegs();
+    }
+
+    void Update()
+    {
+        // Get the handle's current y position and move the entire circuit lab to match
+        float yHandleCurrent = handle.transform.position.y;
+        transform.localPosition = new Vector3(transform.localPosition.x, yStart + (yHandleCurrent - yHandleStart), transform.localPosition.z);
     }
 
     public void CreatePegs()
@@ -65,17 +80,12 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         peg.transform.parent = boardObject.transform;
         peg.transform.localPosition = position;
         peg.transform.localRotation = rotation;
-        peg.transform.localScale = new Vector3(pegScale, pegScale, pegScale);
+        peg.transform.localScale = pegScale;
 
         peg.name = name;
 
         Point coords = new Point(col, row);
         board.SetPegGameObject(coords, peg);
-    }
-
-    void Update()
-    {
-
     }
 
     public void AddComponent(GameObject component, Point start, Point end)
@@ -378,7 +388,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
 
     public void SimulateCircuit()
     {
-        Debug.Log("SIMULATE START");
+        //Debug.Log("SIMULATE START");
 
         // Bump the generation number for this circuit simulation
         int gen = ++board.Generation;
