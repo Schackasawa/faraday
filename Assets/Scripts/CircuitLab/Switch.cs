@@ -2,22 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Switch : MonoBehaviour, ICircuitComponent {
-
+public class Switch : MonoBehaviour, ICircuitComponent
+{
+    public GameObject circuitLab;
     public GameObject pivot;
     public GameObject labelVoltage;
     public GameObject labelCurrent;
 
-    private bool isHeld = false;
-    private bool isPlaced = false;
-    private Point startingPeg;
+    bool isHeld = false;
+    bool isPlaced = false;
+    Point startingPeg;
+    bool isActive = false;
     bool isShortCircuit = false;
     bool isClosed = false;
     double voltage = 0f;
     double current = 0f;
 
-    void Update () {
-
+    void Update ()
+    {
+        // Show/hide the labels
+        var lab = GameObject.Find("CircuitLab").gameObject;
+        var script = circuitLab.GetComponent<CircuitLab>();
+        if (script != null)
+        {
+            labelVoltage.gameObject.SetActive(isActive && script.showLabels);
+            labelCurrent.gameObject.SetActive(isActive && script.showLabels);
+        }
     }
 
     public bool IsHeld()
@@ -42,9 +52,7 @@ public class Switch : MonoBehaviour, ICircuitComponent {
 
     public void SetActive(bool active, bool forward)
     {
-        // Show/hide the labels
-        labelVoltage.gameObject.SetActive(active);
-        labelCurrent.gameObject.SetActive(active);
+        isActive = active;
 
         // Make sure label is right side up
         var componentRotation = transform.localEulerAngles;

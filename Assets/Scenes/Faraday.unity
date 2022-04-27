@@ -1238,6 +1238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02fab5f4d35eff94cb2a8fd7b80acc4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circuitLab: {fileID: 827400518}
   labelResistance: {fileID: 117344050}
   labelCurrent: {fileID: 117344049}
 --- !u!1001 &117764586
@@ -4776,6 +4777,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8cc1b036fc8d240b1ff96622ae0cab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circuitLab: {fileID: 827400518}
   normalCircuitSpeed: 0.16
   shortCircuitSpeed: 0.4
   startPosition: {x: 0, y: 0.08, z: 0}
@@ -6568,6 +6570,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ac129494ca9fc74696adb86a1620cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circuitLab: {fileID: 827400518}
   labelResistance: {fileID: 712385649}
   labelCurrent: {fileID: 712385648}
   filament: {fileID: 712385650}
@@ -7449,6 +7452,9 @@ MonoBehaviour:
   fadeDelay: 2
   fadeTime: 2
   handle: {fileID: 1916824623}
+  showLabels: 0
+  labelActivationButton: 8
+  labelController: {fileID: 30512425}
   pegTemplate: {fileID: 1303542325486322, guid: 499c286c5bd8f914b89c8855596c6763, type: 3}
   pegInterval: 0.1
   pegHeight: 0.5
@@ -9377,6 +9383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09f23e1d5a05b464dadcf086690e1e0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circuitLab: {fileID: 827400518}
 --- !u!1001 &938749732
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12451,6 +12458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c508fa27e952dbe42acacdfb4a4c5cdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circuitLab: {fileID: 827400518}
   pivot: {fileID: 1320512351}
   labelVoltage: {fileID: 1320512349}
   labelCurrent: {fileID: 1320512348}
@@ -17058,6 +17066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8cc1b036fc8d240b1ff96622ae0cab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circuitLab: {fileID: 827400518}
   normalCircuitSpeed: 0.16
   shortCircuitSpeed: 0.4
   startPosition: {x: 0, y: 0.04, z: 0}

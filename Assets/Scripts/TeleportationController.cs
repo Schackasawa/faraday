@@ -9,7 +9,6 @@ public class TeleportationController : MonoBehaviour
     public InputHelpers.Button teleportActivationButton;
     public GameObject reticle;
 
-    // Update is called once per frame
     void Update()
     {
         if (rightTeleportRay)
@@ -19,7 +18,6 @@ public class TeleportationController : MonoBehaviour
             reticle.SetActive(isActive);
         }
     }
-
 
     public bool CheckIfActivated(XRController controller)
     {

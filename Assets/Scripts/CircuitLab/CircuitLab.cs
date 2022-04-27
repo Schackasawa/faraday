@@ -4,13 +4,10 @@ using UnityEngine;
 using SpiceSharp;
 using SpiceSharp.Components;
 using SpiceSharp.Simulations;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class CircuitLab : MonoBehaviour, ICircuitLab
 {
-    private Board board;
-    private const int numRows = 9;
-    private const int numCols = 9;
-
     public AudioSource circuitSound;
     public AudioSource shortSound1;
     public AudioSource shortSound2;
@@ -20,14 +17,22 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     public float fadeDelay = 2f;
     public float fadeTime = 2;
     public GameObject handle;
+    public bool showLabels = false;
+    public InputHelpers.Button labelActivationButton;
+    public XRController labelController;
 
     public GameObject pegTemplate = null;
     public float pegInterval = 0.1f;
     public float pegHeight = 0.45f;
     public Vector3 pegScale;
 
-    private float yHandleStart = 0f;
-    private float yStart = 0f;
+    Board board;
+    const int numRows = 9;
+    const int numCols = 9;
+
+    float yHandleStart = 0f;
+    float yStart = 0f;
+    bool isButtonPressed = false;
 
     void Start()
     {
@@ -47,6 +52,21 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         // Get the handle's current y position and move the entire circuit lab to match
         float yHandleCurrent = handle.transform.position.y;
         transform.localPosition = new Vector3(transform.localPosition.x, yStart + (yHandleCurrent - yHandleStart), transform.localPosition.z);
+
+        // Toggle circuit labels if secondary button is pressed
+        bool isActivated = false;
+        InputHelpers.IsPressed(labelController.inputDevice, labelActivationButton, out isActivated);
+        if (isActivated && !isButtonPressed)
+        {
+            isButtonPressed = true;
+            showLabels = !showLabels;
+        }
+
+        // Reset watcher when button is released
+        if (!isActivated && isButtonPressed)
+        {
+            isButtonPressed = false;
+        }
     }
 
     public void CreatePegs()

@@ -5,6 +5,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class Wire : MonoBehaviour, ICircuitComponent
 {
+    public GameObject circuitLab;
     public float normalCircuitSpeed = 0.16f;
     public float shortCircuitSpeed = 0.40f;
     public Vector3 startPosition = new Vector3(0, 0.04f, 0);
@@ -15,8 +16,8 @@ public class Wire : MonoBehaviour, ICircuitComponent
     public Color shortEmissionColor;
     public float emissionIntensity;
 
-    private Color32 normalBaseColor = new Color32(56, 206, 76, 255);
-    private Color32 shortBaseColor = new Color32(88, 18, 18, 255);
+    Color32 normalBaseColor = new Color32(56, 206, 76, 255);
+    Color32 shortBaseColor = new Color32(88, 18, 18, 255);
     bool isPlaced = false;
     bool isHeld = false;
     bool isClone = false;
@@ -85,6 +86,15 @@ public class Wire : MonoBehaviour, ICircuitComponent
                     }
                 }
             }
+
+            // Show/hide the labels
+            var lab = GameObject.Find("CircuitLab").gameObject;
+            var script = circuitLab.GetComponent<CircuitLab>();
+            if (script != null)
+            {
+                labelVoltage.gameObject.SetActive(isActive && script.showLabels);
+                labelCurrent.gameObject.SetActive(isActive && script.showLabels);
+            }
         }
     }
 
@@ -124,10 +134,6 @@ public class Wire : MonoBehaviour, ICircuitComponent
             // Change electrons to green
             SetElectronColor(normalEmissionColor, normalBaseColor);
         }
-
-        // Show/hide the labels
-        labelVoltage.gameObject.SetActive(active);
-        labelCurrent.gameObject.SetActive(active);
 
         // Make sure label is right side up
         var componentRotation = transform.localEulerAngles;

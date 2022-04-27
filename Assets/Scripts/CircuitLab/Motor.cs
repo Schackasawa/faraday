@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Motor : MonoBehaviour, ICircuitComponent
 {
+    public GameObject circuitLab;
     public GameObject labelResistance;
     public GameObject labelCurrent;
 
@@ -31,6 +32,15 @@ public class Motor : MonoBehaviour, ICircuitComponent
                     child.transform.Rotate(Vector3.forward, step);
                 }
             }
+        }
+
+        // Show/hide the labels
+        var lab = GameObject.Find("CircuitLab").gameObject;
+        var script = circuitLab.GetComponent<CircuitLab>();
+        if (script != null)
+        {
+            labelResistance.gameObject.SetActive(isActive && script.showLabels);
+            labelCurrent.gameObject.SetActive(isActive && script.showLabels);
         }
     }
 
@@ -60,10 +70,6 @@ public class Motor : MonoBehaviour, ICircuitComponent
 
         // Set resistance label text
         labelResistance.GetComponent<TextMesh>().text = resistance.ToString("0.##") + "Ω";
-
-        // Show/hide the labels
-        labelResistance.gameObject.SetActive(active);
-        labelCurrent.gameObject.SetActive(active);
 
         // Make sure label is right side up
         var componentRotation = transform.localEulerAngles;

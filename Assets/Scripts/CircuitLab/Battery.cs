@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Battery : MonoBehaviour, ICircuitComponent
 {
+    public GameObject circuitLab;
+
     bool isPlaced = false;
     bool isHeld = false;
     Point startingPeg;
