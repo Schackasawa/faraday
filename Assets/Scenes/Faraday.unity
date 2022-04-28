@@ -3404,7 +3404,7 @@ GameObject:
   - component: {fileID: 353833725}
   - component: {fileID: 353833726}
   - component: {fileID: 353833727}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: XR Origin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
