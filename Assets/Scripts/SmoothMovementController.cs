@@ -11,11 +11,13 @@ public class SmoothMovementController : MonoBehaviour
     public float gravity = -9.81f;
     public LayerMask groundLayer;
     public float additionalHeight = 0.2f;
+    public Collider tableCollider;
 
     private XROrigin origin;
     private Vector2 inputAxis;
     private CharacterController character;
     private float fallingSpeed = 0f;
+    private float colliderThreshold = 100.0f;
 
     void Start()
     {
@@ -36,7 +38,7 @@ public class SmoothMovementController : MonoBehaviour
         // Move in direction we are facing
         Quaternion headYaw = Quaternion.Euler(0, origin.Camera.transform.eulerAngles.y, 0);
         Vector3 direction = headYaw * new Vector3(inputAxis.x, 0, inputAxis.y);
-        character.Move(direction * Time.fixedDeltaTime * speed);
+        CollisionFlags flags = character.Move(direction * Time.fixedDeltaTime * speed);
 
         // Add effect of gravity
         if (IsGrounded())
@@ -51,7 +53,17 @@ public class SmoothMovementController : MonoBehaviour
         // Make the capsule collider follow our headset during movement so collisions work properly
         character.height = origin.CameraInOriginSpaceHeight + additionalHeight;
         Vector3 capsuleCenter = transform.InverseTransformPoint(origin.Camera.gameObject.transform.position);
-        character.center = new Vector3(capsuleCenter.x, character.height / 2 + character.skinWidth, capsuleCenter.z);
+        Vector3 newCenter = new Vector3(capsuleCenter.x, character.height / 2 + character.skinWidth, capsuleCenter.z);
+
+        // If our headset is moved into the circuit table collider, don't move the character controller. 
+        // This avoids the player suddenly standing on the table when leaning in for a closer look.
+        Vector3 newWorldCenter = transform.TransformPoint(newCenter);
+        Vector3 closest = tableCollider.ClosestPoint(newWorldCenter);
+        float diff = Mathf.Abs(closest.sqrMagnitude - newWorldCenter.sqrMagnitude);
+        if (diff > colliderThreshold)
+        {
+            character.center = newCenter;
+        }
     }
 
     bool IsGrounded()
