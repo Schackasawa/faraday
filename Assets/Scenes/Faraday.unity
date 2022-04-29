@@ -3651,6 +3651,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2147483647
   additionalHeight: 0.2
+  tableCollider: {fileID: 539424434}
 --- !u!143 &353833727
 CharacterController:
   m_ObjectHideFlags: 0
@@ -5317,6 +5318,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 577204109791514120, guid: 3710e267b5771e4438ae6a481aac0ce9, type: 3}
   m_PrefabInstance: {fileID: 539424431}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &539424433 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 577204109791514126, guid: 3710e267b5771e4438ae6a481aac0ce9, type: 3}
+  m_PrefabInstance: {fileID: 539424431}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &539424434
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539424433}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2.7419271, z: 1}
+  m_Center: {x: 0, y: 0.33703947, z: 0}
 --- !u!1 &543170557
 GameObject:
   m_ObjectHideFlags: 0
