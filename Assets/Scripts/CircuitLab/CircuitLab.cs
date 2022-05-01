@@ -31,14 +31,14 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     const int numCols = 9;
 
     float yHandleStart = 0f;
-    float yStart = 0f;
+    float yTableStart = 0f;
     bool isButtonPressed = false;
 
     void Start()
     {
         // Record the initial height of the handle so we can move the whole board when the handle moves
         yHandleStart = handle.transform.position.y;
-        yStart = transform.localPosition.y;
+        yTableStart = transform.localPosition.y;
 
         // Create a new board object to hold all breadboard state
         board = new Board(numRows, numCols);
@@ -51,7 +51,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     {
         // Get the handle's current y position and move the entire circuit lab to match
         float yHandleCurrent = handle.transform.position.y;
-        transform.localPosition = new Vector3(transform.localPosition.x, yStart + (yHandleCurrent - yHandleStart), transform.localPosition.z);
+        transform.localPosition = new Vector3(transform.localPosition.x, yTableStart + (yHandleCurrent - yHandleStart), transform.localPosition.z);
 
         // Toggle circuit labels if secondary button is pressed
         bool isActivated = false;
