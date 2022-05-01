@@ -45,7 +45,7 @@ public class Rocker : MonoBehaviour
                 StartCoroutine(PlaySound(audioSource1, 0f));
 
                 cooldownActive = true;
-                Invoke("Cooldown", 1);
+                Invoke("Cooldown", 0.5f);
             }
         }
     }
