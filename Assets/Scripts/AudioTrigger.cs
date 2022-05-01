@@ -10,7 +10,6 @@ public class AudioTrigger : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Start Collider");
         clip = audioGameObject.GetComponent<AudioSource>();
     }
 
@@ -21,7 +20,6 @@ public class AudioTrigger : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("OnTriggerEnter!");
         if (clip)
         {
             clip.Play();
