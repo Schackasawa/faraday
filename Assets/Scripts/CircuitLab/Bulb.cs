@@ -8,6 +8,7 @@ public class Bulb : MonoBehaviour, ICircuitComponent
     public GameObject labelResistance;
     public GameObject labelCurrent;
     public GameObject filament;
+    public AudioSource colorChangeAudio;
 
     bool isPlaced = false;
     bool isHeld = false;
@@ -17,6 +18,10 @@ public class Bulb : MonoBehaviour, ICircuitComponent
     double voltage = 0f;
     double current = 0f;
     double resistance = 1000f;
+
+    bool cooldownActive = false;
+    Color[] colors = { Color.red, Color.yellow, Color.green, Color.blue, Color.magenta };
+    int emissionColorIdx = 1;
 
     void Update ()
     {
@@ -151,8 +156,13 @@ public class Bulb : MonoBehaviour, ICircuitComponent
         float pctCurrent = ((float)current > maxCurrent ? maxCurrent : (float)current) / maxCurrent;
         intensity = (pctCurrent * (maxIntensity - minIntensity)) + minIntensity;
 
+        ActivateFilament();
+    }
+
+    public void ActivateFilament()
+    {
         // Set the filament emission color and intensity
-        Color baseColor = Color.yellow;
+        Color baseColor = colors[emissionColorIdx];
         Color finalColor = baseColor * Mathf.Pow(2, intensity);
         filament.GetComponent<Renderer>().material.SetColor("_EmissionColor", finalColor);
     }
@@ -182,5 +192,34 @@ public class Bulb : MonoBehaviour, ICircuitComponent
         // Make sure gravity is enabled any time we release the object
         GetComponent<Rigidbody>().isKinematic = false;
         GetComponent<Rigidbody>().useGravity = true;
+    }
+
+    IEnumerator PlaySound(AudioSource source, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        source.Stop();
+        source.Play();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (!cooldownActive && isActive &&
+            other.gameObject.name.Contains("Pinch"))
+        {
+            // Switch the emission color to the next one in the list
+            emissionColorIdx = ++emissionColorIdx % colors.Length;
+            ActivateFilament();
+
+            StartCoroutine(PlaySound(colorChangeAudio, 0f));
+
+            cooldownActive = true;
+            Invoke("Cooldown", 0.5f);
+        }
+    }
+
+    void Cooldown()
+    {
+        cooldownActive = false;
     }
 }
