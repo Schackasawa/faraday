@@ -12,22 +12,76 @@ public class Dispenser : MonoBehaviour, IDispenser
     float growTime = 0.5f;
     int numDispensed = 1;
 
-    // Start is called before the first frame update
+    float arcHeight = 0.2f;
+    float animationSpeed = 0.5f;
+
+    protected class AnimatedComponent
+    {
+        public GameObject gameObject;
+        public Vector3 startPosition;
+        public Vector3 currentPosition;
+        public Vector3 targetPosition;
+
+        public AnimatedComponent(GameObject component, Vector3 target)
+        {
+            gameObject = component;
+            startPosition = component.transform.position;
+            targetPosition = target;
+        }
+    };
+    List<AnimatedComponent> animatedComponents;
+
     void Start()
     {
-        
+        animatedComponents = new List<AnimatedComponent>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // Rotate the object
+        // Rotate the object floating in this dispenser
         transform.Rotate(Vector3.up, xSpeed * Time.deltaTime);
+
+        // Animate any objects we are currently recalling
+        AnimateComponents();
+    }
+
+    private void AnimateComponents()
+    {
+        foreach (var component in animatedComponents)
+        {
+            // First, animate the total position so that the x and z values are calculated properly
+            component.currentPosition = Vector3.MoveTowards(component.gameObject.transform.position, component.targetPosition, animationSpeed * Time.deltaTime);
+
+            // Handle the y component of the position specially, to give it the desired arc throughout the animation
+            float x0 = component.startPosition.x;
+            float x1 = component.targetPosition.x;
+            float dist = x1 - x0;
+            if (dist > 0f)
+            {
+                float nextX = Mathf.MoveTowards(component.gameObject.transform.position.x, x1, animationSpeed * Time.deltaTime);
+                float baseY = Mathf.Lerp(component.startPosition.y, component.targetPosition.y, (nextX - x0) / dist);
+                float arc = arcHeight * (nextX - x0) * (nextX - x1) / (-0.25f * dist * dist);
+                component.currentPosition.y = baseY + arc;
+            }
+
+            // Move to the calculated position
+            component.gameObject.transform.position = component.currentPosition;
+
+            // Destroy the object when we reach the target
+            if (component.currentPosition == component.targetPosition)
+            {
+                Destroy(component.gameObject);
+                component.gameObject = null;
+            }
+        }
+
+        // Remove completed animations from the list
+        animatedComponents.RemoveAll(item => item.gameObject == null);
     }
 
     public void Reset()
     {
-        GameObject child = gameObject.transform.GetChild(0).gameObject;
+        GameObject child = (gameObject.transform.childCount > 0) ? gameObject.transform.GetChild(0).gameObject : null;
 
         // Find all objects created by this dispenser
         GameObject[] components;
@@ -37,10 +91,24 @@ public class Dispenser : MonoBehaviour, IDispenser
             // Avoid the component that is currently in this dispenser
             if (component != child)
             {
-                // Pull each object back to the dispenser and destroy it
-                Destroy(component);
+                // Pull each object back to the dispenser and destroy it when it arrives
+                RecallComponent(component);
             }
         }
+    }
+
+    protected void RecallComponent(GameObject component)
+    {
+        // Disable gravity and any other forces from affecting the component while in flight
+        component.GetComponent<Rigidbody>().useGravity = false;
+        component.GetComponent<Rigidbody>().isKinematic = true;
+
+        // Disable colliders so it won't snap to any breadboard pegs
+        component.GetComponent<BoxCollider>().enabled = false;
+        component.GetComponent<SphereCollider>().enabled = false;
+
+        // Add it to a list of currently animating components
+        animatedComponents.Add(new AnimatedComponent(component, transform.position));
     }
 
     void OnTriggerExit(Collider other)
