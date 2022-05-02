@@ -70,6 +70,21 @@ public class Board
         }
     }
 
+    public void Reset()
+    {
+        for (int i = 0; i < Rows; i++)
+        {
+            for (int j = 0; j < Cols; j++)
+            {
+                Pegs[i, j].GameObject.SetActive(true);
+                Pegs[i, j].IsBlocked = false;
+                Pegs[i, j].Components.Clear();
+            }
+        }
+
+        Components.Clear();
+    }
+
     public void AddComponent(CircuitComponent component)
     {
         // Add it to our master list of components

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PegMgr : MonoBehaviour {
+public class PegMgr : MonoBehaviour, IPeg {
 
     public AudioSource clickSound;
     public float clickStartTime = 0f;
@@ -86,6 +86,14 @@ public class PegMgr : MonoBehaviour {
         {
             LockRotation(clone, original);
         }
+    }
+
+    public void Reset()
+    {
+        isOccupied = false;
+        clone = null;
+        original = null;
+        originalScript = null;
     }
 
     Point GetCoordinates()

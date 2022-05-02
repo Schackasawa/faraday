@@ -9,6 +9,8 @@ public interface ICircuitLab
     bool IsSlotFree(Point start, Point end, int length);
     void BlockPegs(Point start, Point end, bool block);
     void SimulateCircuit();
+    void ToggleLabels();
+    void Reset();
 }
 
 public interface ICircuitComponent
@@ -23,6 +25,16 @@ public interface ICircuitComponent
     bool IsPlaced();
     bool IsClosed();
     void Toggle();
+}
+
+public interface IDispenser
+{
+    void Reset();
+}
+
+public interface IPeg
+{
+    void Reset();
 }
 
 public struct Point

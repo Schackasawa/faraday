@@ -18,8 +18,6 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     public float fadeTime = 2;
     public GameObject handle;
     public bool showLabels = false;
-    public InputHelpers.Button labelActivationButton;
-    public XRController labelController;
 
     public GameObject pegTemplate = null;
     public float pegInterval = 0.1f;
@@ -32,7 +30,6 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
 
     float yHandleStart = 0f;
     float yTableStart = 0f;
-    bool isButtonPressed = false;
 
     void Start()
     {
@@ -52,21 +49,33 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         // Get the handle's current y position and move the entire circuit lab to match
         float yHandleCurrent = handle.transform.position.y;
         transform.localPosition = new Vector3(transform.localPosition.x, yTableStart + (yHandleCurrent - yHandleStart), transform.localPosition.z);
+    }
 
-        // Toggle circuit labels if secondary button is pressed
-        bool isActivated = false;
-        InputHelpers.IsPressed(labelController.inputDevice, labelActivationButton, out isActivated);
-        if (isActivated && !isButtonPressed)
+    public void ToggleLabels()
+    {
+        showLabels = !showLabels;
+    }
+
+    public void Reset()
+    {
+        // Find all dispensers and tell them to clean up their components
+        GameObject[] dispensers;
+        dispensers = GameObject.FindGameObjectsWithTag("Dispenser");
+        foreach (GameObject dispenser in dispensers)
         {
-            isButtonPressed = true;
-            showLabels = !showLabels;
+            dispenser.GetComponent<IDispenser>().Reset();
         }
 
-        // Reset watcher when button is released
-        if (!isActivated && isButtonPressed)
+        // Find all pegs and tell them to reset their state
+        GameObject[] pegs;
+        pegs = GameObject.FindGameObjectsWithTag("Peg");
+        foreach (GameObject peg in pegs)
         {
-            isButtonPressed = false;
+            peg.GetComponent<IPeg>().Reset();
         }
+
+        // Reset all circuit lab state
+        board.Reset();
     }
 
     public void CreatePegs()

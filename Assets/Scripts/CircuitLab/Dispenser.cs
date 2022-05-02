@@ -2,8 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dispenser : MonoBehaviour
+public class Dispenser : MonoBehaviour, IDispenser
 {
+    public enum ComponentTag { Wire, LongWire, Battery, Switch, Motor, Bulb };
+    public ComponentTag componentTag;
+
     float xSpeed = 90f;
     float growDelay = 0.1f;
     float growTime = 0.5f;
@@ -20,6 +23,24 @@ public class Dispenser : MonoBehaviour
     {
         // Rotate the object
         transform.Rotate(Vector3.up, xSpeed * Time.deltaTime);
+    }
+
+    public void Reset()
+    {
+        GameObject child = gameObject.transform.GetChild(0).gameObject;
+
+        // Find all objects created by this dispenser
+        GameObject[] components;
+        components = GameObject.FindGameObjectsWithTag(componentTag.ToString());
+        foreach (GameObject component in components)
+        {
+            // Avoid the component that is currently in this dispenser
+            if (component != child)
+            {
+                // Pull each object back to the dispenser and destroy it
+                Destroy(component);
+            }
+        }
     }
 
     void OnTriggerExit(Collider other)
