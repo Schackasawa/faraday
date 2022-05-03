@@ -126,7 +126,8 @@ public class Dispenser : MonoBehaviour, IDispenser
     void OnTriggerExit(Collider other)
     {
         // Find out if we lost our child
-        if (transform.childCount == 0 && other.transform.name.Contains("Component"))
+        if (transform.childCount == 0 && other.transform.name.Contains("Component") && 
+            (other.transform.tag == componentTag.ToString()))
         {
             // Turn back on gravity
             other.gameObject.GetComponent<Rigidbody>().useGravity = true;
