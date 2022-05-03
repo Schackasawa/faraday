@@ -134,7 +134,7 @@ public class Dispenser : MonoBehaviour, IDispenser
 
             // Create another object
             var clone = Instantiate(other);
-            clone.transform.name = other.name + numDispensed++;
+            clone.transform.name = "Component" + other.tag + numDispensed++;
             clone.transform.parent = transform;
             clone.transform.localPosition = new Vector3(0, 0, 0);
             clone.transform.localRotation = new Quaternion();

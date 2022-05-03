@@ -16,8 +16,8 @@ public class CircuitComponent
     public int Generation { get; set; }
     public int ShortCircuitGeneration { get; set; }
     public bool ShortCircuitForward { get; set; }
-    public Export<double> VoltageExport { get; set; }
-    public Export<double> CurrentExport { get; set; }
+    public IExport<double> VoltageExport { get; set; }
+    public IExport<double> CurrentExport { get; set; }
 
     public bool ActiveCircuit { get; set; }
     public bool ActiveShort { get; set; }

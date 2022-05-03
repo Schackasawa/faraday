@@ -31,6 +31,10 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     float yHandleStart = 0f;
     float yTableStart = 0f;
 
+    float batteryVoltage = 10f;
+    float bulbResistance = 1000f;
+    float motorResistance = 2000f;
+
     void Start()
     {
         // Record the initial height of the handle so we can move the whole board when the handle moves
@@ -442,7 +446,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
 
             List<CircuitComponent> circuit = new List<CircuitComponent>();
             List<CircuitComponent> components = new List<CircuitComponent>();
-            List<SpiceSharp.Circuits.Entity> entities = new List<SpiceSharp.Circuits.Entity>();
+            List<SpiceSharp.Entities.Entity> entities = new List<SpiceSharp.Entities.Entity>();
 
             // Add the battery as the first component
             circuit.Add(battery);
@@ -520,7 +524,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                         if (component.Generation == gen)
                         {
                             // Update the voltage value
-                            var voltage = component.VoltageExport.Value - output;
+                            var voltage = output - component.VoltageExport.Value;
                             //Debug.Log("      ### " + component.GameObject.name + " Voltage at " + component.Start.ToString() + "-" + component.End.ToString() + ": " + voltage);
                             SetVoltage(component, voltage);
 
@@ -544,9 +548,20 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                         StartCoroutine(PlaySound(circuitSound, circuitSoundStartTime));
                     }
                 }
-                catch
+                catch (ValidationFailedException exception)
                 {
-                    Debug.Log("Simulation Error! Caught exception...");
+                    Debug.Log("Simulation Error! Caught exception: " + exception);
+                    foreach (var rule in exception.Rules)
+                    {
+                        Debug.Log("  Rule: " + rule);
+                        Debug.Log("  ViolationCount: " + rule.ViolationCount);
+                        foreach (var violation in rule.Violations)
+                        {
+                            Debug.Log("    Violation: " + violation);
+                            Debug.Log("    Subject: " + violation.Subject);
+                        }
+                    }
+                    Debug.Log("Inner exception: " + exception.InnerException);
 
                     // Treat a simulation error as a short circuit
                     battery.ActiveShort = true;
@@ -590,7 +605,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         //Debug.Log("SIMULATE END");
     }
 
-    private void FindCircuit(List<CircuitComponent> circuit, List<SpiceSharp.Circuits.Entity> entities, List<CircuitComponent> components,
+    private void FindCircuit(List<CircuitComponent> circuit, List<SpiceSharp.Entities.Entity> entities, List<CircuitComponent> components,
         CircuitComponent component, Point currPosition, int resistors, int gen)
     {
         // If the component is not closed (for example, an open switch), the circuit is broken
@@ -731,7 +746,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         circuit.Remove(component);
     }
 
-    void AddSpiceSharpEntity(List<SpiceSharp.Circuits.Entity> entities, CircuitComponent component, bool forward)
+    void AddSpiceSharpEntity(List<SpiceSharp.Entities.Entity> entities, CircuitComponent component, bool forward)
     {
         string name = component.GameObject.name;
         string start = forward ? component.Start.ToString() : component.End.ToString();
@@ -743,41 +758,38 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         switch (component.ComponentType)
         {
             case CircuitComponentType.Battery:
-                entities.Add(new VoltageSource("V" + name, mid, end, 0f));
-                entities.Add(new VoltageSource(name, mid, start, 10f));
-
-                // Add a lossless wire to the battery. SpiceSharp isn't happy if the circuit doesn't have at least
-                // one line, so this makes sure that even circuits built entirely of resistors simulate properly.
-                entities.Add(new LosslessTransmissionLine("L" + name, end, name + "a", name + "a", end));
+                // If this is the first battery we are adding, make sure one of the ends is specified as 
+                // ground, or "0" Volt point of reference.
+                if (entities.Count == 0)
+                {
+                    entities.Add(new VoltageSource("V" + name, start, "0", 0f));
+                    entities.Add(new VoltageSource(name, "0", end, batteryVoltage));
+                }
+                else
+                {
+                    entities.Add(new VoltageSource("V" + name, start, mid, 0f));
+                    entities.Add(new VoltageSource(name, mid, end, batteryVoltage));
+                }
                 break;
             case CircuitComponentType.Bulb:
                 // Treat bulbs as simple resistors
-                entities.Add(new VoltageSource("V" + name, start, mid, 0f));
-                entities.Add(new Resistor(name, mid, end, 1000f));
+                entities.Add(new VoltageSource("V" + name, mid, start, 0f));
+                entities.Add(new Resistor(name, mid, end, bulbResistance));
                 break;
             case CircuitComponentType.Motor:
                 // Treat motors as simple resistors
-                entities.Add(new VoltageSource("V" + name, start, mid, 0f));
-                entities.Add(new Resistor(name, mid, end, 2000f));
+                entities.Add(new VoltageSource("V" + name, mid, start, 0f));
+                entities.Add(new Resistor(name, mid, end, motorResistance));
                 break;
             case CircuitComponentType.Wire:
             case CircuitComponentType.LongWire:
             case CircuitComponentType.Switch:
             default:
-                // Treat wires and switches as lossless, but insert a 0 voltage source in the middle to
-                // act as an ammeter.
-                entities.Add(new LosslessTransmissionLine(name, start, mid + "a", mid + "a", start));
-                entities.Add(new VoltageSource("V" + name, mid + "a", mid + "b", 0f));
-                entities.Add(new LosslessTransmissionLine(name + "b", mid + "b", end, end, mid + "b"));
+                // Treat wires and switches as lossless transmission lines
+                entities.Add(new VoltageSource("V" + name, mid, start, 0f));
+                entities.Add(new LosslessTransmissionLine(name, mid, end, end, mid));
                 break;
         }
-    }
-
-    SpiceSharp.Circuits.Entity CreateSpiceSharpMeter(CircuitComponent component, Point start, Point end)
-    {
-        string name = component.GameObject.name + end.ToString();
-
-        return new VoltageSource(name, end.ToString(), start.ToString(), 1f);
     }
 
     IEnumerator PlaySound(AudioSource source, float delay)
