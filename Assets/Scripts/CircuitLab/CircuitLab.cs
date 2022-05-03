@@ -718,7 +718,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                     if (previousComponent == nextComponent)
                     {
                         // Loop detected! Deactivate all components and bail out.
-                        Debug.Log("LOOP detected! Deactivating components...");
+                        //Debug.Log("LOOP detected! Deactivating components...");
                         foreach (CircuitComponent loopComponent in circuit)
                         {
                             var script = loopComponent.GameObject.GetComponent<ICircuitComponent>();

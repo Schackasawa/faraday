@@ -92,8 +92,9 @@ public class Wire : MonoBehaviour, ICircuitComponent
             var script = circuitLab.GetComponent<CircuitLab>();
             if (script != null)
             {
-                labelVoltage.gameObject.SetActive(isActive && script.showLabels);
-                labelCurrent.gameObject.SetActive(isActive && script.showLabels);
+                bool showLabels = script.showLabels && isActive && !isShortCircuit;
+                labelVoltage.gameObject.SetActive(showLabels);
+                labelCurrent.gameObject.SetActive(showLabels);
             }
         }
     }
