@@ -21,12 +21,20 @@ public class Dispenser : MonoBehaviour, IDispenser
         public Vector3 startPosition;
         public Vector3 currentPosition;
         public Vector3 targetPosition;
+        public Vector3 startScale;
+        public Vector3 currentScale;
+        public Vector3 targetScale;
 
         public AnimatedComponent(GameObject component, Vector3 target)
         {
             gameObject = component;
             startPosition = component.transform.position;
+            currentPosition = startPosition;
             targetPosition = target;
+
+            startScale = component.transform.localScale;
+            currentScale = component.transform.localScale;
+            targetScale = component.transform.localScale / 3;
         }
     };
     List<AnimatedComponent> animatedComponents;
@@ -56,12 +64,16 @@ public class Dispenser : MonoBehaviour, IDispenser
             float x0 = component.startPosition.x;
             float x1 = component.targetPosition.x;
             float dist = x1 - x0;
-            if (dist > 0f)
+            if (dist != 0f)
             {
                 float nextX = Mathf.MoveTowards(component.gameObject.transform.position.x, x1, animationSpeed * Time.deltaTime);
                 float baseY = Mathf.Lerp(component.startPosition.y, component.targetPosition.y, (nextX - x0) / dist);
                 float arc = arcHeight * (nextX - x0) * (nextX - x1) / (-0.25f * dist * dist);
                 component.currentPosition.y = baseY + arc;
+
+                // Also shrink as we approach the destination
+                component.currentScale = Vector3.Lerp(component.startScale, component.targetScale, (nextX - x0) / dist);
+                component.gameObject.transform.localScale = component.currentScale;
             }
 
             // Move to the calculated position
