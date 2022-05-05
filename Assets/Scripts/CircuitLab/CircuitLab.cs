@@ -532,20 +532,30 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 {
                     var input = args.GetVoltage(battery.End.ToString());
                     var output = args.GetVoltage(battery.Start.ToString());
-                    //Debug.Log("      ### IN: " + input + ", OUT: " + output);
 
+                    // Loop through the components and find the lowest voltage, so we can normalize the entire
+                    // circuit to start at 0V.
+                    double minVoltage = 0f;
+                    foreach (CircuitComponent component in components)
+                    {
+                        if (component.Generation == gen)
+                        {
+                            if (component.VoltageExport.Value < minVoltage)
+                                minVoltage = component.VoltageExport.Value;
+                        }
+                    }
+
+                    // Now loop through again and tell each component what its voltage and current values are
                     foreach (CircuitComponent component in components)
                     {
                         if (component.Generation == gen)
                         {
                             // Update the voltage value
-                            var voltage = output - component.VoltageExport.Value;
-                            //Debug.Log("      ### " + component.GameObject.name + " Voltage at " + component.Start.ToString() + "-" + component.End.ToString() + ": " + voltage);
+                            var voltage = component.VoltageExport.Value - minVoltage;
                             SetVoltage(component, voltage);
 
                             // Update the current value
                             var current = component.CurrentExport.Value;
-                            //Debug.Log("      ### " + component.GameObject.name + " Current at " + component.Start.ToString() + "-" + component.End.ToString() + ": " + current);
                             SetCurrent(component, current);
                         }
                     }
