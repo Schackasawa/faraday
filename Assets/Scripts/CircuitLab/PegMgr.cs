@@ -50,7 +50,6 @@ public class PegMgr : MonoBehaviour, IPeg {
 
             // Lock it to the board
             Point start = GetCoordinates();
-            originalScript.Place(start);
             original.transform.parent = transform;
             original.gameObject.GetComponent<Rigidbody>().useGravity = false;
             original.gameObject.GetComponent<Rigidbody>().isKinematic = true;
@@ -62,6 +61,10 @@ public class PegMgr : MonoBehaviour, IPeg {
 
             // Lock rotation to the nearest 90 degrees
             Point end = LockRotation(original, original);
+
+            // Notify the component itself where it has been placed
+            Direction direction = GetDirection(start, end);
+            originalScript.Place(start, direction);
 
             // Discard the placeholder
             DestroyClone();
@@ -201,6 +204,18 @@ public class PegMgr : MonoBehaviour, IPeg {
         {
             DrawLine(transform.position, neighbor.transform.position, color);
         }
+    }
+
+    Direction GetDirection(Point start, Point end)
+    {
+        if (end.y > start.y)
+            return Direction.North;
+        else if (end.y < start.y)
+            return Direction.South;
+        else if (end.x > start.x)
+            return Direction.East;
+        else
+            return Direction.West;
     }
 
     string GetClosestNeighbor(GameObject clone, List<string> names)

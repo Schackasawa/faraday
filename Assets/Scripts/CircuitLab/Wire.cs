@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using TMPro;
 
 public class Wire : MonoBehaviour, ICircuitComponent
 {
@@ -11,7 +12,9 @@ public class Wire : MonoBehaviour, ICircuitComponent
     public Vector3 startPosition = new Vector3(0, 0.04f, 0);
     public Vector3 endPosition = new Vector3(0, -0.04f, 0);
     public GameObject labelVoltage;
+    public TMP_Text labelVoltageText;
     public GameObject labelCurrent;
+    public TMP_Text labelCurrentText;
     public Color normalEmissionColor;
     public Color shortEmissionColor;
     public float emissionIntensity;
@@ -22,6 +25,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
     bool isHeld = false;
     bool isClone = false;
     Point startingPeg;
+    Direction direction;
     float baseCurrent = 0.005f;
     float speed = 0f;
     bool isForward = true;
@@ -45,10 +49,11 @@ public class Wire : MonoBehaviour, ICircuitComponent
         isClone = true;
     }
 
-    public void Place(Point start)
+    public void Place(Point start, Direction dir)
     {
         isPlaced = true;
         startingPeg = start;
+        direction = dir;
     }
 
     void Update () {
@@ -127,44 +132,37 @@ public class Wire : MonoBehaviour, ICircuitComponent
     public void SetActive(bool active, bool forward)
     {
         isActive = active;
-        if (active)
-        {
-            isForward = forward;
-            speed = normalCircuitSpeed;
+        if (!active)
+            return;
 
-            // Change electrons to green
-            SetElectronColor(normalEmissionColor, normalBaseColor);
-        }
+        isForward = forward;
+        speed = normalCircuitSpeed;
+
+        // Change electrons to green
+        SetElectronColor(normalEmissionColor, normalBaseColor);
 
         // Make sure label is right side up
-        var componentRotation = transform.localEulerAngles;
         var rotationVoltage = labelVoltage.transform.localEulerAngles;
         var positionVoltage = labelVoltage.transform.localPosition;
         var rotationCurrent = labelCurrent.transform.localEulerAngles;
         var positionCurrent = labelCurrent.transform.localPosition;
-        if (componentRotation.z == 0f)
+        switch (direction)
         {
-            rotationVoltage.z = rotationCurrent.z = - 90f;
-            positionVoltage.x = -0.01f;
-            positionCurrent.x = 0.025f;
-        }
-        else if (componentRotation.z == 90f)
-        {
-            rotationVoltage.z = rotationCurrent.z = -90f;
-            positionVoltage.x = -0.01f;
-            positionCurrent.x = 0.025f;
-        }
-        else if (componentRotation.z == 180f)
-        {
-            rotationVoltage.z = rotationCurrent.z = 90f;
-            positionVoltage.x = 0.01f;
-            positionCurrent.x = -0.025f;
-        }
-        else
-        {
-            rotationVoltage.z = rotationCurrent.z = 90f;
-            positionVoltage.x = 0.01f;
-            positionCurrent.x = -0.025f;
+            case Direction.North:
+            case Direction.East:
+                rotationVoltage.z = rotationCurrent.z = -90f;
+                positionVoltage.x = -0.022f;
+                positionCurrent.x = 0.022f;
+                break;
+            case Direction.South:
+            case Direction.West:
+                rotationVoltage.z = rotationCurrent.z = 90f;
+                positionVoltage.x = 0.022f;
+                positionCurrent.x = -0.022f;
+                break;
+            default:
+                Debug.Log("Unrecognized direction!");
+                break;
         }
 
         // Apply label positioning
@@ -207,7 +205,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
         voltage = newVoltage;
 
         // Update label text
-        labelVoltage.GetComponent<TextMesh>().text = voltage.ToString("0.##") + "V";
+        labelVoltageText.text = voltage.ToString("0.##") + "V";
     }
 
     public void SetCurrent(double newCurrent)
@@ -228,7 +226,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
         else
         {
             // Update label text
-            labelCurrent.GetComponent<TextMesh>().text = (current * 1000f).ToString("0.##") + "mA";
+            labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
 
             // Update electron speed
             speed = normalCircuitSpeed * ((float)current / baseCurrent);

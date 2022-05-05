@@ -20,7 +20,7 @@ public interface ICircuitComponent
     void SetVoltage(double newVoltage);
     void SetCurrent(double newCurrent);
     void SetClone();
-    void Place(Point start);
+    void Place(Point start, Direction dir);
     bool IsHeld();
     bool IsPlaced();
     bool IsClosed();
@@ -36,6 +36,8 @@ public interface IPeg
 {
     void Reset();
 }
+
+public enum Direction { North, South, East, West };
 
 public struct Point
 {

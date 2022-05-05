@@ -1,17 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Switch : MonoBehaviour, ICircuitComponent
 {
     public GameObject circuitLab;
     public GameObject pivot;
     public GameObject labelVoltage;
+    public TMP_Text labelVoltageText;
     public GameObject labelCurrent;
+    public TMP_Text labelCurrentText;
 
     bool isHeld = false;
     bool isPlaced = false;
     Point startingPeg;
+    Direction direction;
     bool isActive = false;
     bool isShortCircuit = false;
     bool isClosed = false;
@@ -45,10 +49,11 @@ public class Switch : MonoBehaviour, ICircuitComponent
     {
     }
 
-    public void Place(Point start)
+    public void Place(Point start, Direction dir)
     {
         isPlaced = true;
         startingPeg = start;
+        direction = dir;
     }
 
     public void SetActive(bool active, bool forward)
@@ -56,34 +61,27 @@ public class Switch : MonoBehaviour, ICircuitComponent
         isActive = active;
 
         // Make sure label is right side up
-        var componentRotation = transform.localEulerAngles;
         var rotationVoltage = labelVoltage.transform.localEulerAngles;
         var positionVoltage = labelVoltage.transform.localPosition;
         var rotationCurrent = labelCurrent.transform.localEulerAngles;
         var positionCurrent = labelCurrent.transform.localPosition;
-        if (componentRotation.z == 0f)
+        switch (direction)
         {
-            rotationVoltage.z = rotationCurrent.z = -90f;
-            positionVoltage.x = -0.01f;
-            positionCurrent.x = 0.025f;
-        }
-        else if (componentRotation.z == 90f)
-        {
-            rotationVoltage.z = rotationCurrent.z = -90f;
-            positionVoltage.x = -0.01f;
-            positionCurrent.x = 0.025f;
-        }
-        else if (componentRotation.z == 180f)
-        {
-            rotationVoltage.z = rotationCurrent.z = 90f;
-            positionVoltage.x = 0.01f;
-            positionCurrent.x = -0.025f;
-        }
-        else
-        {
-            rotationVoltage.z = rotationCurrent.z = 90f;
-            positionVoltage.x = 0.01f;
-            positionCurrent.x = -0.025f;
+            case Direction.North:
+            case Direction.East:
+                rotationVoltage.z = rotationCurrent.z = -90f;
+                positionVoltage.x = -0.022f;
+                positionCurrent.x = 0.022f;
+                break;
+            case Direction.South:
+            case Direction.West:
+                rotationVoltage.z = rotationCurrent.z = 90f;
+                positionVoltage.x = 0.022f;
+                positionCurrent.x = -0.022f;
+                break;
+            default:
+                Debug.Log("Unrecognized direction!");
+                break;
         }
 
         // Apply label positioning
@@ -132,7 +130,7 @@ public class Switch : MonoBehaviour, ICircuitComponent
         voltage = newVoltage;
 
         // Update label text
-        labelVoltage.GetComponent<TextMesh>().text = voltage.ToString("0.##") + "V";
+        labelVoltageText.text = voltage.ToString("0.##") + "V";
     }
 
     public void SetCurrent(double newCurrent)
@@ -150,7 +148,7 @@ public class Switch : MonoBehaviour, ICircuitComponent
         else
         {
             // Update label text
-            labelCurrent.GetComponent<TextMesh>().text = (current * 1000f).ToString("0.##") + "mA";
+            labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
         }
     }
 

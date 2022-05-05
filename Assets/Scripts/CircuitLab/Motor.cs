@@ -1,16 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Motor : MonoBehaviour, ICircuitComponent
 {
     public GameObject circuitLab;
     public GameObject labelResistance;
+    public TMP_Text labelResistanceText;
     public GameObject labelCurrent;
+    public TMP_Text labelCurrentText;
 
     bool isPlaced = false;
     bool isHeld = false;
     Point startingPeg;
+    Direction direction;
     float speed = 0f;
     float baseCurrent = 0.005f;
     bool isActive = false;
@@ -58,10 +62,11 @@ public class Motor : MonoBehaviour, ICircuitComponent
     {
     }
 
-    public void Place(Point start)
+    public void Place(Point start, Direction dir)
     {
         isPlaced = true;
         startingPeg = start;
+        direction = dir;
     }
 
     public void SetActive(bool active, bool forward)
@@ -69,37 +74,30 @@ public class Motor : MonoBehaviour, ICircuitComponent
         isActive = active;
 
         // Set resistance label text
-        labelResistance.GetComponent<TextMesh>().text = resistance.ToString("0.##") + "Ω";
+        labelResistanceText.text = resistance.ToString("0.##") + "Ω";
 
         // Make sure label is right side up
-        var componentRotation = transform.localEulerAngles;
         var rotationResistance = labelResistance.transform.localEulerAngles;
         var positionResistance = labelResistance.transform.localPosition;
         var rotationCurrent = labelCurrent.transform.localEulerAngles;
         var positionCurrent = labelCurrent.transform.localPosition;
-        if (componentRotation.z == 0f)
+        switch (direction)
         {
-            rotationResistance.z = rotationCurrent.z = -90f;
-            positionResistance.x = -0.01f;
-            positionCurrent.x = 0.025f;
-        }
-        else if (componentRotation.z == 90f)
-        {
-            rotationResistance.z = rotationCurrent.z = -90f;
-            positionResistance.x = -0.01f;
-            positionCurrent.x = 0.025f;
-        }
-        else if (componentRotation.z == 180f)
-        {
-            rotationResistance.z = rotationCurrent.z = 90f;
-            positionResistance.x = 0.01f;
-            positionCurrent.x = -0.025f;
-        }
-        else
-        {
-            rotationResistance.z = rotationCurrent.z = 90f;
-            positionResistance.x = 0.01f;
-            positionCurrent.x = -0.025f;
+            case Direction.North:
+            case Direction.East:
+                rotationResistance.z = rotationCurrent.z = -90f;
+                positionResistance.x = -0.022f;
+                positionCurrent.x = 0.022f;
+                break;
+            case Direction.South:
+            case Direction.West:
+                rotationResistance.z = rotationCurrent.z = 90f;
+                positionResistance.x = 0.022f;
+                positionCurrent.x = -0.022f;
+                break;
+            default:
+                Debug.Log("Unrecognized direction!");
+                break;
         }
 
         // Apply label positioning
@@ -146,7 +144,7 @@ public class Motor : MonoBehaviour, ICircuitComponent
         else
         {
             // Update label text
-            labelCurrent.GetComponent<TextMesh>().text = (current * 1000f).ToString("0.##") + "mA";
+            labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
 
             // Update motor speed
             speed = normalSpeed * ((float)current / baseCurrent);

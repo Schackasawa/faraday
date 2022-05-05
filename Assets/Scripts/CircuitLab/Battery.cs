@@ -29,7 +29,7 @@ public class Battery : MonoBehaviour, ICircuitComponent
     {
     }
 
-    public void Place(Point start)
+    public void Place(Point start, Direction dir)
     {
         isPlaced = true;
         startingPeg = start;
