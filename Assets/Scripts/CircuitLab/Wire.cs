@@ -93,7 +93,6 @@ public class Wire : MonoBehaviour, ICircuitComponent
             }
 
             // Show/hide the labels
-            var lab = GameObject.Find("CircuitLab").gameObject;
             var script = circuitLab.GetComponent<CircuitLab>();
             if (script != null)
             {
@@ -243,8 +242,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
 
         if (isPlaced)
         {
-            var lab = GameObject.Find("CircuitLab").gameObject;
-            var script = lab.GetComponent<ICircuitLab>();
+            var script = circuitLab.GetComponent<ICircuitLab>();
             script.RemoveComponent(this.gameObject, startingPeg);
 
             isPlaced = false;

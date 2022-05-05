@@ -25,7 +25,6 @@ public class Switch : MonoBehaviour, ICircuitComponent
     void Update ()
     {
         // Show/hide the labels
-        var lab = GameObject.Find("CircuitLab").gameObject;
         var script = circuitLab.GetComponent<CircuitLab>();
         if (script != null)
         {
@@ -117,8 +116,7 @@ public class Switch : MonoBehaviour, ICircuitComponent
         pivot.transform.localEulerAngles = rotation;
 
         // Trigger a new simulation since we may have just closed or opened a circuit
-        var lab = GameObject.Find("CircuitLab").gameObject;
-        var script = lab.GetComponent<ICircuitLab>();
+        var script = circuitLab.GetComponent<ICircuitLab>();
         if (script != null)
         {
             script.SimulateCircuit();
@@ -162,8 +160,7 @@ public class Switch : MonoBehaviour, ICircuitComponent
 
         if (isPlaced)
         {
-            var lab = GameObject.Find("CircuitLab").gameObject;
-            var script = lab.GetComponent<ICircuitLab>();
+            var script = circuitLab.GetComponent<ICircuitLab>();
             script.RemoveComponent(this.gameObject, startingPeg);
 
             isPlaced = false;
