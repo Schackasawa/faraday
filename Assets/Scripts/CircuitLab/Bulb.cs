@@ -21,7 +21,6 @@ public class Bulb : MonoBehaviour, ICircuitComponent
     float intensity = 0f;
     double voltage = 0f;
     double current = 0f;
-    double resistance = 1000f;
 
     bool cooldownActive = false;
     Color[] colors = { Color.red, Color.yellow, Color.green, Color.blue, Color.magenta };
@@ -75,7 +74,7 @@ public class Bulb : MonoBehaviour, ICircuitComponent
         isActive = active;
 
         // Set resistance label text
-        labelResistanceText.text = resistance.ToString("0.##") + "Ω";
+        labelResistanceText.text = CircuitLab.BulbResistance.ToString("0.##") + "Ω";
 
         // Make sure label is right side up
         var rotationResistance = labelResistance.transform.localEulerAngles;

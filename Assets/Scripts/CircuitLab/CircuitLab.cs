@@ -31,9 +31,10 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     float yHandleStart = 0f;
     float yTableStart = 0f;
 
-    float batteryVoltage = 10f;
-    float bulbResistance = 1000f;
-    float motorResistance = 2000f;
+    // Component-related constants
+    public const float BatteryVoltage = 10f;
+    public const float BulbResistance = 1000f;
+    public const float MotorResistance = 2000f;
 
     void Start()
     {
@@ -788,23 +789,23 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 if (entities.Count == 0)
                 {
                     entities.Add(new VoltageSource("V" + name, start, "0", 0f));
-                    entities.Add(new VoltageSource(name, "0", end, batteryVoltage));
+                    entities.Add(new VoltageSource(name, "0", end, BatteryVoltage));
                 }
                 else
                 {
                     entities.Add(new VoltageSource("V" + name, start, mid, 0f));
-                    entities.Add(new VoltageSource(name, mid, end, batteryVoltage));
+                    entities.Add(new VoltageSource(name, mid, end, BatteryVoltage));
                 }
                 break;
             case CircuitComponentType.Bulb:
                 // Treat bulbs as simple resistors
                 entities.Add(new VoltageSource("V" + name, mid, start, 0f));
-                entities.Add(new Resistor(name, mid, end, bulbResistance));
+                entities.Add(new Resistor(name, mid, end, BulbResistance));
                 break;
             case CircuitComponentType.Motor:
                 // Treat motors as simple resistors
                 entities.Add(new VoltageSource("V" + name, mid, start, 0f));
-                entities.Add(new Resistor(name, mid, end, motorResistance));
+                entities.Add(new Resistor(name, mid, end, MotorResistance));
                 break;
             case CircuitComponentType.Wire:
             case CircuitComponentType.LongWire:

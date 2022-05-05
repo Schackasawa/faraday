@@ -20,7 +20,6 @@ public class Motor : MonoBehaviour, ICircuitComponent
     bool isActive = false;
     double voltage = 0f;
     double current = 0f;
-    double resistance = 2000f;
     float normalSpeed = 600f;
 
     void Update () {
@@ -74,7 +73,7 @@ public class Motor : MonoBehaviour, ICircuitComponent
         isActive = active;
 
         // Set resistance label text
-        labelResistanceText.text = resistance.ToString("0.##") + "Ω";
+        labelResistanceText.text = CircuitLab.MotorResistance.ToString("0.##") + "Ω";
 
         // Make sure label is right side up
         var rotationResistance = labelResistance.transform.localEulerAngles;
