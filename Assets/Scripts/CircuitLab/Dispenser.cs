@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Dispenser : MonoBehaviour, IDispenser
 {
+    // Public members set in Unity Object Inspector
     public enum ComponentTag { Wire, LongWire, Battery, Switch, Motor, Bulb };
     public ComponentTag componentTag;
 

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Rocker : MonoBehaviour
 {
+    // Public members set in Unity Object Inspector
     public AudioSource audioSource1;
 
     private bool cooldownActive = false;

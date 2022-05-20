@@ -8,6 +8,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class CircuitLab : MonoBehaviour, ICircuitLab
 {
+    // Public members set in Unity Object Inspector
     public AudioSource circuitSound;
     public AudioSource shortSound1;
     public AudioSource shortSound2;
@@ -18,7 +19,6 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     public float fadeTime = 2;
     public GameObject handle;
     public bool showLabels = false;
-
     public GameObject pegTemplate = null;
     public float pegInterval = 0.1f;
     public float pegHeight = 0.45f;

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PegMgr : MonoBehaviour, IPeg {
-
+public class PegMgr : MonoBehaviour, IPeg
+{
+    // Public members set in Unity Object Inspector
     public AudioSource clickSound;
     public float clickStartTime = 0f;
 

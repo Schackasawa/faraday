@@ -5,6 +5,8 @@ using UnityEngine;
 public class Lever : MonoBehaviour
 {
     public enum Action { ResetComponents, ToggleLabels };
+
+    // Public members set in Unity Object Inspector
     public Action action;
     public HingeJoint hinge;
     public AudioSource activationSound;
