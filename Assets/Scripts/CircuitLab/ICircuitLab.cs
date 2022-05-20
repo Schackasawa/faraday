@@ -13,20 +13,6 @@ public interface ICircuitLab
     void Reset();
 }
 
-public interface ICircuitComponent
-{
-    void SetActive(bool active, bool forward);
-    void SetShortCircuit(bool shortCircuit, bool forward);
-    void SetVoltage(double newVoltage);
-    void SetCurrent(double newCurrent);
-    void SetClone();
-    void Place(Point start, Direction dir);
-    bool IsHeld();
-    bool IsPlaced();
-    bool IsClosed();
-    void Toggle();
-}
-
 public interface IDispenser
 {
     void Reset();
@@ -36,8 +22,6 @@ public interface IPeg
 {
     void Reset();
 }
-
-public enum Direction { North, South, East, West };
 
 public struct Point
 {

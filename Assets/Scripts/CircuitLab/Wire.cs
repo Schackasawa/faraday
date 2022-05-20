@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using TMPro;
 
-public class Wire : MonoBehaviour, ICircuitComponent
+public class Wire : CircuitComponent
 {
     public GameObject circuitLab;
     public float normalCircuitSpeed = 0.16f;
@@ -21,47 +21,18 @@ public class Wire : MonoBehaviour, ICircuitComponent
 
     Color32 normalBaseColor = new Color32(56, 206, 76, 255);
     Color32 shortBaseColor = new Color32(88, 18, 18, 255);
-    bool isPlaced = false;
-    bool isHeld = false;
-    bool isClone = false;
-    Point startingPeg;
-    Direction direction;
     float baseCurrent = 0.005f;
     float speed = 0f;
-    bool isForward = true;
-    bool isActive = false;
-    bool isShortCircuit = false;
-    double voltage = 0f;
-    double current = 0f;
 
-    public bool IsHeld()
+    public Wire() : base(CircuitComponentType.Wire) { }
+
+    protected override void Update ()
     {
-        return isHeld;
-    }
-
-    public bool IsPlaced()
-    {
-        return isPlaced;
-    }
-
-    public void SetClone()
-    {
-        isClone = true;
-    }
-
-    public void Place(Point start, Direction dir)
-    {
-        isPlaced = true;
-        startingPeg = start;
-        direction = dir;
-    }
-
-    void Update () {
-        if (!isClone)
+        if (!IsClone)
         {
             // Figure out what direction the current is flowing and set the start/end positions accordingly
-            Vector3 start = isForward ? startPosition : endPosition;
-            Vector3 end = isForward ? endPosition : startPosition;
+            Vector3 start = IsForward ? startPosition : endPosition;
+            Vector3 end = IsForward ? endPosition : startPosition;
 
             // Move all electrons the same amount
             float step = speed * Time.deltaTime;
@@ -84,9 +55,9 @@ public class Wire : MonoBehaviour, ICircuitComponent
                         child.localPosition = new Vector3(start.x, start.y + remaining, start.z);
 
                         // Activate/Deactivate electrons when they hit the wrapping point
-                        if (isActive != child.gameObject.activeSelf)
+                        if (IsActive != child.gameObject.activeSelf)
                         {
-                            child.gameObject.SetActive(isActive);
+                            child.gameObject.SetActive(IsActive);
                         }
                     }
                 }
@@ -96,7 +67,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
             var script = circuitLab.GetComponent<CircuitLab>();
             if (script != null)
             {
-                bool showLabels = script.showLabels && isActive && !isShortCircuit;
+                bool showLabels = script.showLabels && IsActive && !IsShortCircuit;
                 labelVoltage.gameObject.SetActive(showLabels);
                 labelCurrent.gameObject.SetActive(showLabels);
             }
@@ -128,13 +99,13 @@ public class Wire : MonoBehaviour, ICircuitComponent
         }
     }
 
-    public void SetActive(bool active, bool forward)
+    public override void SetActive(bool isActive, bool isForward)
     {
-        isActive = active;
-        if (!active)
+        IsActive = isActive;
+        if (!isActive)
             return;
 
-        isForward = forward;
+        IsForward = isForward;
         speed = normalCircuitSpeed;
 
         // Change electrons to green
@@ -145,7 +116,7 @@ public class Wire : MonoBehaviour, ICircuitComponent
         var positionVoltage = labelVoltage.transform.localPosition;
         var rotationCurrent = labelCurrent.transform.localEulerAngles;
         var positionCurrent = labelCurrent.transform.localPosition;
-        switch (direction)
+        switch (Direction)
         {
             case Direction.North:
             case Direction.East:
@@ -171,13 +142,13 @@ public class Wire : MonoBehaviour, ICircuitComponent
         labelCurrent.transform.localPosition = positionCurrent;
     }
 
-    public void SetShortCircuit(bool shortCircuit, bool forward)
+    public override void SetShortCircuit(bool isShortCircuit, bool isForward)
     {
-        isShortCircuit = shortCircuit;
-        if (shortCircuit)
+        IsShortCircuit = isShortCircuit;
+        if (isShortCircuit)
         {
-            isActive = true;
-            isForward = forward;
+            IsActive = true;
+            IsForward = isForward;
             speed = shortCircuitSpeed;
 
             // Change electrons to red
@@ -189,33 +160,23 @@ public class Wire : MonoBehaviour, ICircuitComponent
         }
     }
 
-    public bool IsClosed()
+    public override void SetVoltage(double voltage)
     {
-        return true;
-    }
-
-    public void Toggle()
-    {
-
-    }
-
-    public void SetVoltage(double newVoltage)
-    {
-        voltage = newVoltage;
+        Voltage = voltage;
 
         // Update label text
         labelVoltageText.text = voltage.ToString("0.##") + "V";
     }
 
-    public void SetCurrent(double newCurrent)
+    public override void SetCurrent(double current)
     {
-        current = newCurrent;
+        Current = current;
 
         // If we don't have a significant positive current, then we are inactive, even if
         // we are technically part of an active circuit
-        if (newCurrent <= 0.0000001)
+        if (current <= 0.0000001)
         {
-            isActive = false;
+            IsActive = false;
             DeactivateElectrons();
 
             // Hide the labels
@@ -234,24 +195,24 @@ public class Wire : MonoBehaviour, ICircuitComponent
 
     public void SelectEntered()
     {
-        isHeld = true;
+        IsHeld = true;
 
         // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
         GetComponent<BoxCollider>().enabled = true;
         GetComponent<SphereCollider>().enabled = true;
 
-        if (isPlaced)
+        if (IsPlaced)
         {
             var script = circuitLab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, startingPeg);
+            script.RemoveComponent(this.gameObject, StartingPeg);
 
-            isPlaced = false;
+            IsPlaced = false;
         }
     }
 
     public void SelectExited()
     {
-        isHeld = false;
+        IsHeld = false;
 
         // Make sure gravity is enabled any time we release the object
         GetComponent<Rigidbody>().isKinematic = false;

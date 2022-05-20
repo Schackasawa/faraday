@@ -142,38 +142,16 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         // Figure out what type of component this is
         string name = component.name;
         //Debug.Log("Adding component: " + name + ", Start(" + start.x + "," + start.y + "), End(" + end.x + "," + end.y + ")");
-        CircuitComponentType type = CircuitComponentType.Wire;
-        if (name.Contains("Battery"))
+
+        CircuitComponent cp = component.GetComponent<CircuitComponent>();
+        if (cp == null)
         {
-            type = CircuitComponentType.Battery;
-        }
-        else if (name.Contains("Bulb"))
-        {
-            type = CircuitComponentType.Bulb;
-        }
-        else if (name.Contains("Wire"))
-        {
-            type = CircuitComponentType.Wire;
-        }
-        else if (name.Contains("LongWire"))
-        {
-            type = CircuitComponentType.LongWire;
-        }
-        else if (name.Contains("Motor"))
-        {
-            type = CircuitComponentType.Motor;
-        }
-        else if (name.Contains("Switch"))
-        {
-            type = CircuitComponentType.Switch;
-        }
-        else
-        {
-            Debug.Log("Unrecognized component type: " + name + "!");
+            Debug.Log($"ERROR: Component Type not found in {name}!");
+            return;
         }
 
         // Create a component object and link it to the starting and ending pegs
-        CircuitComponent newComponent = new CircuitComponent(component, type, start, end);
+        PlacedComponent newComponent = new PlacedComponent(component, cp.ComponentType, start, end);
         board.AddComponent(newComponent);
 
         // Hide any pegs that we are blocking with the new component
@@ -188,7 +166,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         Peg pegA = board.GetPeg(start);
         if (pegA != null)
         {
-            CircuitComponent found = pegA.Components.Find(x => x.GameObject == component);
+            PlacedComponent found = pegA.Components.Find(x => x.GameObject == component);
             if (found != null)
             {
                 Peg pegB = board.GetPeg(found.End);
@@ -210,13 +188,13 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         }
 
         // Deactivate the component
-        var script = component.GetComponent<ICircuitComponent>();
+        var script = component.GetComponent<CircuitComponent>();
         if (script != null)
         {
             script.SetActive(false, false);
         }
 
-        // Run a new circuit simulation so that any circuits we've just broken get deactivated
+        // Run a new circuit simulation so that any circuits we've just broken gets deactivated
         SimulateCircuit();
     }
 
@@ -280,7 +258,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         // If there are any components at start that are connected in the direction
         // of end, then we already know this slot is blocked, regardless of length.
         Peg pegStart = board.GetPeg(start);
-        foreach (CircuitComponent component in pegStart.Components)
+        foreach (PlacedComponent component in pegStart.Components)
         {
             if (LinesOverlap(start, end, component.Start, component.End))
             {
@@ -358,7 +336,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
 
                 // Check all of the components attached to pegB to see if any of them
                 // are also attached to pegA. If so, it is blocking the slot.
-                foreach (CircuitComponent component in pegB.Components)
+                foreach (PlacedComponent component in pegB.Components)
                 {
                     if (((component.Start.x == pointA.x) && (component.Start.y == pointA.y)) ||
                         ((component.End.x == pointA.x) && (component.End.y == pointA.y)))
@@ -399,36 +377,36 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         }
     }
 
-    private void DeactivateComponent(CircuitComponent component)
+    private void DeactivateComponent(PlacedComponent component)
     {
-        var script = component.GameObject.GetComponent<ICircuitComponent>();
+        var script = component.GameObject.GetComponent<CircuitComponent>();
         if (script != null)
         {
             script.SetActive(false, false);
         }
     }
 
-    private void SetShortComponent(CircuitComponent component, bool shortCircuit, bool forward)
+    private void SetShortComponent(PlacedComponent component, bool isShortCircuit, bool isForward)
     {
-        var script = component.GameObject.GetComponent<ICircuitComponent>();
+        var script = component.GameObject.GetComponent<CircuitComponent>();
         if (script != null)
         {
-            script.SetShortCircuit(shortCircuit, forward);
+            script.SetShortCircuit(isShortCircuit, isForward);
         }
     }
 
-    private void SetVoltage(CircuitComponent component, double voltage)
+    private void SetVoltage(PlacedComponent component, double voltage)
     {
-        var script = component.GameObject.GetComponent<ICircuitComponent>();
+        var script = component.GameObject.GetComponent<CircuitComponent>();
         if (script != null)
         {
             script.SetVoltage(voltage);
         }
     }
 
-    private void SetCurrent(CircuitComponent component, double current)
+    private void SetCurrent(PlacedComponent component, double current)
     {
-        var script = component.GameObject.GetComponent<ICircuitComponent>();
+        var script = component.GameObject.GetComponent<CircuitComponent>();
         if (script != null)
         {
             script.SetCurrent(current);
@@ -443,8 +421,8 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         int gen = ++board.Generation;
 
         // First, search for all batteries so we know where to start
-        List<CircuitComponent> batteries = new List<CircuitComponent>();
-        foreach (CircuitComponent component in board.Components)
+        List<PlacedComponent> batteries = new List<PlacedComponent>();
+        foreach (PlacedComponent component in board.Components)
         {
             if (component.ComponentType == CircuitComponentType.Battery)
             {
@@ -452,7 +430,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
             }
         }
 
-        foreach (CircuitComponent battery in batteries)
+        foreach (PlacedComponent battery in batteries)
         {
             // Skip batteries that have already been included in a circuit
             if (battery.Generation == gen)
@@ -460,8 +438,8 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 continue;
             }
 
-            List<CircuitComponent> circuit = new List<CircuitComponent>();
-            List<CircuitComponent> components = new List<CircuitComponent>();
+            List<PlacedComponent> circuit = new List<PlacedComponent>();
+            List<PlacedComponent> components = new List<PlacedComponent>();
             List<SpiceSharp.Entities.Entity> entities = new List<SpiceSharp.Entities.Entity>();
 
             // Add the battery as the first component
@@ -475,7 +453,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
             Point currPosition = battery.End;
             Peg peg = board.GetPeg(currPosition);
 
-            foreach (CircuitComponent component in peg.Components)
+            foreach (PlacedComponent component in peg.Components)
             {
                 if (component != battery)
                 {
@@ -486,7 +464,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
             // Case 1: There's a short circuit on this battery
             if (battery.ShortCircuitGeneration == gen)
             {
-                foreach (CircuitComponent component in components)
+                foreach (PlacedComponent component in components)
                 {
                     // Highlight each component involved in the short circuit, and deactivate all 
                     // other connected components.
@@ -517,7 +495,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 var op = new OP("DC 1");
 
                 // Create exports so we can access component properties
-                foreach (CircuitComponent component in components)
+                foreach (PlacedComponent component in components)
                 {
                     bool isBattery = (component.ComponentType == CircuitComponentType.Battery);
 
@@ -537,7 +515,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                     // Loop through the components and find the lowest voltage, so we can normalize the entire
                     // circuit to start at 0V.
                     double minVoltage = 0f;
-                    foreach (CircuitComponent component in components)
+                    foreach (PlacedComponent component in components)
                     {
                         if (component.Generation == gen)
                         {
@@ -547,7 +525,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                     }
 
                     // Now loop through again and tell each component what its voltage and current values are
-                    foreach (CircuitComponent component in components)
+                    foreach (PlacedComponent component in components)
                     {
                         if (component.Generation == gen)
                         {
@@ -596,7 +574,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                     StartCoroutine(PlaySound(shortSound2, shortSound2StartTime));
 
                     // Deactivate all components in this circuit
-                    foreach (CircuitComponent component in components)
+                    foreach (PlacedComponent component in components)
                     {
                         DeactivateComponent(component);
                     }
@@ -611,7 +589,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         }
 
         // Deactivate any components that didn't get included in any complete circuits this time
-        foreach (CircuitComponent component in board.Components)
+        foreach (PlacedComponent component in board.Components)
         {
             if (component.Generation != gen)
             {
@@ -620,7 +598,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         }
 
         // Clear any components that didn't get included in any short circuits this time
-        foreach (CircuitComponent component in board.Components)
+        foreach (PlacedComponent component in board.Components)
         {
             if (component.ShortCircuitGeneration != gen)
             {
@@ -631,20 +609,14 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         //Debug.Log("SIMULATE END");
     }
 
-    private void FindCircuit(List<CircuitComponent> circuit, List<SpiceSharp.Entities.Entity> entities, List<CircuitComponent> components,
-        CircuitComponent component, Point currPosition, int resistors, int gen)
+    private void FindCircuit(List<PlacedComponent> circuit, List<SpiceSharp.Entities.Entity> entities, List<PlacedComponent> components,
+        PlacedComponent component, Point currPosition, int resistors, int gen)
     {
         // If the component is not closed (for example, an open switch), the circuit is broken
-        if (component.ComponentType == CircuitComponentType.Switch)
+        var script = component.GameObject.GetComponent<CircuitComponent>();
+        if (script == null || !script.IsClosed)
         {
-            var script = component.GameObject.GetComponent<ICircuitComponent>();
-            if (script != null)
-            {
-                if (!script.IsClosed())
-                {
-                    return;
-                }
-            }
+            return;
         }
 
         // Add the component to the circuit we are building
@@ -669,17 +641,14 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
 
         // Get all components at the new end point
         Peg peg = board.GetPeg(nextPosition);
-        //Debug.Log("Got all components at the next position. (" + peg.Components.Count + ")");
 
-        foreach (CircuitComponent nextComponent in peg.Components)
+        foreach (PlacedComponent nextComponent in peg.Components)
         {
             // Ignore the component we just added
             if (nextComponent == component)
             {
                 continue;
             }
-
-            //Debug.Log("Examining next component...");
 
             // Check if we found the battery again. If so, make sure it's the negative terminal.
             //Debug.Log("--- NEXT COMPONENT (" + nextComponent.GameObject.name + ") TYPE = " + nextComponent.ComponentType);
@@ -696,7 +665,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 if (resistors == 0)
                 {
                     // Mark each of the components involved in the short circuit
-                    foreach (CircuitComponent shortComponent in circuit)
+                    foreach (PlacedComponent shortComponent in circuit)
                     {
                         // Figure out what direction the current is flowing in for this component
                         bool forward = (position.y == shortComponent.Start.y) && (position.x == shortComponent.Start.x);
@@ -711,7 +680,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 }
 
                 // Activate all components in this circuit
-                foreach (CircuitComponent activeComponent in circuit)
+                foreach (PlacedComponent activeComponent in circuit)
                 {
                     // Figure out what direction the current is flowing in for this component
                     bool forward = (position.y == activeComponent.Start.y) && (position.x == activeComponent.Start.x);
@@ -726,10 +695,10 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                     // in this generation of circuit simulation
                     activeComponent.Generation = gen;
 
-                    var script = activeComponent.GameObject.GetComponent<ICircuitComponent>();
+                    // Activate this component
+                    script = activeComponent.GameObject.GetComponent<CircuitComponent>();
                     if (script != null)
                     {
-                        // Activate this component
                         script.SetActive(true, forward);
                     }
 
@@ -739,40 +708,38 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
             else
             {
                 // Check if we are connecting to a previously connected component
-                foreach (CircuitComponent previousComponent in circuit)
+                foreach (PlacedComponent previousComponent in circuit)
                 {
                     if (previousComponent == nextComponent)
                     {
                         // Loop detected! Deactivate all components and bail out.
-                        //Debug.Log("LOOP detected! Deactivating components...");
-                        foreach (CircuitComponent loopComponent in circuit)
+                        foreach (PlacedComponent loopComponent in circuit)
                         {
-                            var script = loopComponent.GameObject.GetComponent<ICircuitComponent>();
+                            // XXX - Ideally, we would deactivate any components in the loop, but how do
+                            // we keep from deactivating components that are also part of a valid circuit?
+                            script = loopComponent.GameObject.GetComponent<CircuitComponent>();
                             if (script != null)
                             {
-                                // XXXDPS - How to we keep from deactivating valid paths?
                                 //script.SetActive(false, true);
                             }
-                        }
 
-                        circuit.Remove(component);
+                            circuit.Remove(component);
+                        }
                         return;
                     }
                 }
 
                 // A circuit has not yet been found, so go ahead and add the next component to our 
                 // circuit and continue searching...
-                //Debug.Log("Looks good. Adding to circuit and recursing...");
                 FindCircuit(circuit, entities, components, nextComponent, nextPosition, resistors, gen);
             }
         }
 
         // Pop off the last component and return
-        //Debug.Log("Recursion done. Leaving...");
         circuit.Remove(component);
     }
 
-    void AddSpiceSharpEntity(List<SpiceSharp.Entities.Entity> entities, CircuitComponent component, bool forward)
+    void AddSpiceSharpEntity(List<SpiceSharp.Entities.Entity> entities, PlacedComponent component, bool forward)
     {
         string name = component.GameObject.name;
         string start = forward ? component.Start.ToString() : component.End.ToString();
@@ -808,7 +775,6 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 entities.Add(new Resistor(name, mid, end, MotorResistance));
                 break;
             case CircuitComponentType.Wire:
-            case CircuitComponentType.LongWire:
             case CircuitComponentType.Switch:
             default:
                 // Treat wires and switches as lossless transmission lines

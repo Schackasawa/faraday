@@ -19,7 +19,7 @@ public class PegMgr : MonoBehaviour, IPeg {
     bool isOccupied = false;
     GameObject clone = null;
     GameObject original = null;
-    ICircuitComponent originalScript = null;
+    CircuitComponent originalScript = null;
 
 	void Start () {
         clickSound.GetComponent<AudioSource>();
@@ -35,13 +35,13 @@ public class PegMgr : MonoBehaviour, IPeg {
 
     void Update () {
         // If we have an original object referenced, and that object has been dropped, center it on this peg
-        if (original && !originalScript.IsHeld())
+        if (original && !originalScript.IsHeld)
         {
             // If the component has already been placed, it must have temporarily been cloned on two different
             // pegs. This can happen in high-velocity situations when a component enters the collider of a
             // second peg before Unity invokes the exit callback from the collider of the first peg. In this,
             // case, just destroy this clone since the component has already been locked to another location.
-            if (originalScript.IsPlaced())
+            if (originalScript.IsPlaced)
             {
                 DestroyClone();
                 original = null;
@@ -294,13 +294,13 @@ public class PegMgr : MonoBehaviour, IPeg {
 
             // Remember which object we are cloning
             original = other.gameObject;
-            originalScript = original.GetComponent<ICircuitComponent>();
+            originalScript = original.GetComponent<CircuitComponent>();
 
             // Create a clone of the object
             clone = Instantiate(other.gameObject);
             clone.GetComponent<Rigidbody>().detectCollisions = false;
-            var cloneScript = clone.GetComponent<ICircuitComponent>();
-            cloneScript.SetClone();
+            var cloneScript = clone.GetComponent<CircuitComponent>();
+            cloneScript.IsClone = true;
 
             // Make the clone translucent
             //var rend = clone.gameObject.GetComponent<Renderer>();

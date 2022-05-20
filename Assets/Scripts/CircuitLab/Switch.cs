@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Switch : MonoBehaviour, ICircuitComponent
+public class Switch : CircuitComponent
 {
     public GameObject circuitLab;
     public GameObject pivot;
@@ -12,59 +12,34 @@ public class Switch : MonoBehaviour, ICircuitComponent
     public GameObject labelCurrent;
     public TMP_Text labelCurrentText;
 
-    bool isHeld = false;
-    bool isPlaced = false;
-    Point startingPeg;
-    Direction direction;
-    bool isActive = false;
-    bool isShortCircuit = false;
-    bool isClosed = false;
-    double voltage = 0f;
-    double current = 0f;
+    public Switch() : base(CircuitComponentType.Switch)
+    {
+        // Switches start off in the open position
+        IsClosed = false;
+    }
 
-    void Update ()
+    protected override void Update ()
     {
         // Show/hide the labels
         var script = circuitLab.GetComponent<CircuitLab>();
         if (script != null)
         {
-            bool showLabels = script.showLabels && isActive && !isShortCircuit;
+            bool showLabels = script.showLabels && IsActive && !IsShortCircuit;
             labelVoltage.gameObject.SetActive(showLabels);
             labelCurrent.gameObject.SetActive(showLabels);
         }
     }
 
-    public bool IsHeld()
+    public override void SetActive(bool isActive, bool isForward)
     {
-        return isHeld;
-    }
-
-    public bool IsPlaced()
-    {
-        return isPlaced;
-    }
-
-    public void SetClone()
-    {
-    }
-
-    public void Place(Point start, Direction dir)
-    {
-        isPlaced = true;
-        startingPeg = start;
-        direction = dir;
-    }
-
-    public void SetActive(bool active, bool forward)
-    {
-        isActive = active;
+        IsActive = isActive;
 
         // Make sure label is right side up
         var rotationVoltage = labelVoltage.transform.localEulerAngles;
         var positionVoltage = labelVoltage.transform.localPosition;
         var rotationCurrent = labelCurrent.transform.localEulerAngles;
         var positionCurrent = labelCurrent.transform.localPosition;
-        switch (direction)
+        switch (Direction)
         {
             case Direction.North:
             case Direction.East:
@@ -90,10 +65,10 @@ public class Switch : MonoBehaviour, ICircuitComponent
         labelCurrent.transform.localPosition = positionCurrent;
     }
 
-    public void SetShortCircuit(bool shortCircuit, bool forward)
+    public override void SetShortCircuit(bool isShortCircuit, bool isForward)
     {
-        isShortCircuit = shortCircuit;
-        if (shortCircuit)
+        IsShortCircuit = isShortCircuit;
+        if (isShortCircuit)
         {
             // Hide the labels
             labelVoltage.gameObject.SetActive(false);
@@ -101,18 +76,13 @@ public class Switch : MonoBehaviour, ICircuitComponent
         }
     }
 
-    public bool IsClosed()
+    public override void Toggle()
     {
-        return isClosed;
-    }
-
-    public void Toggle()
-    {
-        isClosed = !isClosed;
+        IsClosed = !IsClosed;
 
         // Set the blade to the proper position by rotating the pivot
         var rotation = pivot.transform.localEulerAngles;
-        rotation.z = isClosed ? 0 : -45f;
+        rotation.z = IsClosed ? 0 : -45f;
         pivot.transform.localEulerAngles = rotation;
 
         // Trigger a new simulation since we may have just closed or opened a circuit
@@ -123,21 +93,21 @@ public class Switch : MonoBehaviour, ICircuitComponent
         }
     }
 
-    public void SetVoltage(double newVoltage)
+    public override void SetVoltage(double voltage)
     {
-        voltage = newVoltage;
+        Voltage = voltage;
 
         // Update label text
         labelVoltageText.text = voltage.ToString("0.##") + "V";
     }
 
-    public void SetCurrent(double newCurrent)
+    public override void SetCurrent(double current)
     {
-        current = newCurrent;
+        Current = current;
 
         // If we don't have a significant positive current, then we are inactive, even if
         // we are technically part of an active circuit
-        if (newCurrent <= 0.0000001)
+        if (current <= 0.0000001)
         {
             // Hide the labels
             labelVoltage.gameObject.SetActive(false);
@@ -152,24 +122,24 @@ public class Switch : MonoBehaviour, ICircuitComponent
 
     public void SelectEntered()
     {
-        isHeld = true;
+        IsHeld = true;
 
         // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
         GetComponent<BoxCollider>().enabled = true;
         GetComponent<SphereCollider>().enabled = true;
 
-        if (isPlaced)
+        if (IsPlaced)
         {
             var script = circuitLab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, startingPeg);
+            script.RemoveComponent(this.gameObject, StartingPeg);
 
-            isPlaced = false;
+            IsPlaced = false;
         }
     }
 
     public void SelectExited()
     {
-        isHeld = false;
+        IsHeld = false;
 
         // Make sure gravity is enabled any time we release the object
         GetComponent<Rigidbody>().isKinematic = false;

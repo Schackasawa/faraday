@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Bulb : MonoBehaviour, ICircuitComponent
+public class Bulb : CircuitComponent
 {
     public GameObject circuitLab;
     public GameObject labelResistance;
@@ -13,64 +13,38 @@ public class Bulb : MonoBehaviour, ICircuitComponent
     public GameObject filament;
     public AudioSource colorChangeAudio;
 
-    bool isPlaced = false;
-    bool isHeld = false;
-    Point startingPeg;
-    Direction direction;
-    bool isActive = false;
     float intensity = 0f;
-    double voltage = 0f;
-    double current = 0f;
 
     bool cooldownActive = false;
     Color[] colors = { Color.red, Color.yellow, Color.green, Color.blue, Color.magenta };
     int emissionColorIdx = 1;
 
-    void Update ()
+    public Bulb() : base(CircuitComponentType.Bulb) { }
+
+    protected override void Update ()
     {
         // Show/hide the labels
         var script = circuitLab.GetComponent<CircuitLab>();
         if (script != null)
         {
-            labelResistance.gameObject.SetActive(isActive && script.showLabels);
-            labelCurrent.gameObject.SetActive(isActive && script.showLabels);
+            labelResistance.gameObject.SetActive(IsActive && script.showLabels);
+            labelCurrent.gameObject.SetActive(IsActive && script.showLabels);
         }
     }
 
-    public bool IsHeld()
+    public override void SetActive(bool isActive, bool isForward)
     {
-        return isHeld;
-    }
-
-    public bool IsPlaced()
-    {
-        return isPlaced;
-    }
-
-    public void SetClone()
-    {
-    }
-
-    public void Place(Point start, Direction dir)
-    {
-        isPlaced = true;
-        startingPeg = start;
-        direction = dir;
-    }
-
-    public void SetActive(bool active, bool forward)
-    {
-        if (!isActive && active)
+        if (!IsActive && isActive)
         {
             ActivateLight();
         }
 
-        if (isActive && !active)
+        if (IsActive && !isActive)
         {
             DeactivateLight();
         }
 
-        isActive = active;
+        IsActive = isActive;
 
         // Set resistance label text
         labelResistanceText.text = CircuitLab.BulbResistance.ToString("0.##") + "Ω";
@@ -80,7 +54,7 @@ public class Bulb : MonoBehaviour, ICircuitComponent
         var positionResistance = labelResistance.transform.localPosition;
         var rotationCurrent = labelCurrent.transform.localEulerAngles;
         var positionCurrent = labelCurrent.transform.localPosition;
-        switch (direction)
+        switch (Direction)
         {
             case Direction.North:
             case Direction.East:
@@ -118,29 +92,9 @@ public class Bulb : MonoBehaviour, ICircuitComponent
         filament.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
     }
 
-    public void SetShortCircuit(bool shortCircuit, bool forward)
+    public override void SetCurrent(double current)
     {
-        // Not possible, since bulbs have resistance
-    }
-
-    public bool IsClosed()
-    {
-        return true;
-    }
-
-    public void Toggle()
-    {
-
-    }
-
-    public void SetVoltage(double newVoltage)
-    {
-        voltage = newVoltage;
-    }
-
-    public void SetCurrent(double newCurrent)
-    {
-        current = newCurrent;
+        Current = current;
 
         // Update label text
         labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
@@ -165,24 +119,24 @@ public class Bulb : MonoBehaviour, ICircuitComponent
 
     public void SelectEntered()
     {
-        isHeld = true;
+        IsHeld = true;
 
         // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
         GetComponent<BoxCollider>().enabled = true;
         GetComponent<SphereCollider>().enabled = true;
 
-        if (isPlaced)
+        if (IsPlaced)
         {
             var script = circuitLab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, startingPeg);
+            script.RemoveComponent(this.gameObject, StartingPeg);
 
-            isPlaced = false;
+            IsPlaced = false;
         }
     }
 
     public void SelectExited()
     {
-        isHeld = false;
+        IsHeld = false;
 
         // Make sure gravity is enabled any time we release the object
         GetComponent<Rigidbody>().isKinematic = false;
@@ -199,7 +153,7 @@ public class Bulb : MonoBehaviour, ICircuitComponent
 
     void OnTriggerEnter(Collider other)
     {
-        if (!cooldownActive && isActive &&
+        if (!cooldownActive && IsActive &&
             other.gameObject.name.Contains("Pinch"))
         {
             // Switch the emission color to the next one in the list

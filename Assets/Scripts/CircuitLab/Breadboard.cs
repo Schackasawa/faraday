@@ -5,9 +5,8 @@ using SpiceSharp;
 using SpiceSharp.Components;
 using SpiceSharp.Simulations;
 
-public enum CircuitComponentType { Wire, LongWire, Battery, Bulb, Motor, Switch };
 
-public class CircuitComponent
+public class PlacedComponent
 {
     public GameObject GameObject { get; set; }
     public CircuitComponentType ComponentType { get; set; }
@@ -22,7 +21,7 @@ public class CircuitComponent
     public bool ActiveCircuit { get; set; }
     public bool ActiveShort { get; set; }
 
-    public CircuitComponent(GameObject gameObject, CircuitComponentType type, Point start, Point end)
+    public PlacedComponent(GameObject gameObject, CircuitComponentType type, Point start, Point end)
     {
         GameObject = gameObject;
         ComponentType = type;
@@ -34,19 +33,19 @@ public class CircuitComponent
 public class Peg
 {
     public GameObject GameObject { get; set; }
-    public List<CircuitComponent> Components { get; set; }
+    public List<PlacedComponent> Components { get; set; }
     public bool IsBlocked { get; set; }
 
     public Peg()
     {
-        Components = new List<CircuitComponent>();
+        Components = new List<PlacedComponent>();
         IsBlocked = false;
     }
 }
 
 public class Board
 {
-    public List<CircuitComponent> Components { get; set; }
+    public List<PlacedComponent> Components { get; set; }
     private Peg[,] Pegs { get; set; }
     private int Rows { get; set; }
     private int Cols { get; set; }
@@ -54,7 +53,7 @@ public class Board
 
     public Board(int rows, int cols)
     {
-        Components = new List<CircuitComponent>();
+        Components = new List<PlacedComponent>();
         Generation = 0;
 
         Rows = rows;
@@ -85,7 +84,7 @@ public class Board
         Components.Clear();
     }
 
-    public void AddComponent(CircuitComponent component)
+    public void AddComponent(PlacedComponent component)
     {
         // Add it to our master list of components
         Components.Add(component);

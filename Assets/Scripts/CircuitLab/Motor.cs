@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Motor : MonoBehaviour, ICircuitComponent
+public class Motor : CircuitComponent
 {
     public GameObject circuitLab;
     public GameObject labelResistance;
@@ -11,20 +11,15 @@ public class Motor : MonoBehaviour, ICircuitComponent
     public GameObject labelCurrent;
     public TMP_Text labelCurrentText;
 
-    bool isPlaced = false;
-    bool isHeld = false;
-    Point startingPeg;
-    Direction direction;
     float speed = 0f;
     float baseCurrent = 0.005f;
-    bool isActive = false;
-    double voltage = 0f;
-    double current = 0f;
     float normalSpeed = 600f;
 
-    void Update () {
+    public Motor() : base(CircuitComponentType.Motor) { }
 
-        if (isActive)
+    protected override void Update () {
+
+        if (IsActive)
         {
             float step = speed * Time.deltaTime;
             foreach (Transform child in transform)
@@ -41,35 +36,14 @@ public class Motor : MonoBehaviour, ICircuitComponent
         var script = circuitLab.GetComponent<CircuitLab>();
         if (script != null)
         {
-            labelResistance.gameObject.SetActive(isActive && script.showLabels);
-            labelCurrent.gameObject.SetActive(isActive && script.showLabels);
+            labelResistance.gameObject.SetActive(IsActive && script.showLabels);
+            labelCurrent.gameObject.SetActive(IsActive && script.showLabels);
         }
     }
 
-    public bool IsHeld()
+    public override void SetActive(bool isActive, bool isForward)
     {
-        return isHeld;
-    }
-
-    public bool IsPlaced()
-    {
-        return isPlaced;
-    }
-
-    public void SetClone()
-    {
-    }
-
-    public void Place(Point start, Direction dir)
-    {
-        isPlaced = true;
-        startingPeg = start;
-        direction = dir;
-    }
-
-    public void SetActive(bool active, bool forward)
-    {
-        isActive = active;
+        IsActive = isActive;
 
         // Set resistance label text
         labelResistanceText.text = CircuitLab.MotorResistance.ToString("0.##") + "Ω";
@@ -79,7 +53,7 @@ public class Motor : MonoBehaviour, ICircuitComponent
         var positionResistance = labelResistance.transform.localPosition;
         var rotationCurrent = labelCurrent.transform.localEulerAngles;
         var positionCurrent = labelCurrent.transform.localPosition;
-        switch (direction)
+        switch (Direction)
         {
             case Direction.North:
             case Direction.East:
@@ -105,35 +79,15 @@ public class Motor : MonoBehaviour, ICircuitComponent
         labelCurrent.transform.localPosition = positionCurrent;
     }
 
-    public void SetShortCircuit(bool shortCircuit, bool forward)
+    public override void SetCurrent(double current)
     {
-        // Not possible, since motors have resistance
-    }
-
-    public bool IsClosed()
-    {
-        return true;
-    }
-
-    public void Toggle()
-    {
-
-    }
-
-    public void SetVoltage(double newVoltage)
-    {
-        voltage = newVoltage;
-    }
-
-    public void SetCurrent(double newCurrent)
-    {
-        current = newCurrent;
+        Current = current;
 
         // If we don't have a significant positive current, then we are inactive, even if
         // we are technically part of an active circuit
-        if (newCurrent <= 0.0000001)
+        if (current <= 0.0000001)
         {
-            isActive = false;
+            IsActive = false;
 
             // Hide the labels
             labelResistance.gameObject.SetActive(false);
@@ -151,24 +105,24 @@ public class Motor : MonoBehaviour, ICircuitComponent
 
     public void SelectEntered()
     {
-        isHeld = true;
+        IsHeld = true;
 
         // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
         GetComponent<BoxCollider>().enabled = true;
         GetComponent<SphereCollider>().enabled = true;
 
-        if (isPlaced)
+        if (IsPlaced)
         {
             var script = circuitLab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, startingPeg);
+            script.RemoveComponent(this.gameObject, StartingPeg);
 
-            isPlaced = false;
+            IsPlaced = false;
         }
     }
 
     public void SelectExited()
     {
-        isHeld = false;
+        IsHeld = false;
 
         // Make sure gravity is enabled any time we release the object
         GetComponent<Rigidbody>().isKinematic = false;

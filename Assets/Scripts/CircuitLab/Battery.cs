@@ -3,63 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Battery : MonoBehaviour, ICircuitComponent
+public class Battery : CircuitComponent
 {
     public GameObject circuitLab;
     public GameObject labelVoltage;
     public TMP_Text labelVoltageText;
 
-    bool isPlaced = false;
-    bool isHeld = false;
-    bool isActive = false;
-    Point startingPeg;
-    Direction direction;
+    public Battery() : base(CircuitComponentType.Battery) { }
 
-    void Start()
+    protected override void Start()
     {
         // Set voltage label text
         labelVoltageText.text = CircuitLab.BatteryVoltage.ToString("0.##") + "V";
     }
 
-    void Update()
+    protected override void Update()
     {
         // Show/hide the labels
         var script = circuitLab.GetComponent<CircuitLab>();
         if (script != null)
         {
-            labelVoltage.gameObject.SetActive(isActive && script.showLabels);
+            labelVoltage.gameObject.SetActive(IsActive && script.showLabels);
         }
     }
 
-    public bool IsHeld()
+    public override void SetActive(bool isActive, bool isForward)
     {
-        return isHeld;
-    }
-
-    public bool IsPlaced()
-    {
-        return isPlaced;
-    }
-
-    public void SetClone()
-    {
-    }
-
-    public void Place(Point start, Direction dir)
-    {
-        isPlaced = true;
-        startingPeg = start;
-        direction = dir;
-    }
-
-    public void SetActive(bool active, bool forward)
-    {
-        isActive = active;
+        IsActive = isActive;
 
         // Make sure label is right side up
         var rotationVoltage = labelVoltage.transform.localEulerAngles;
         var positionVoltage = labelVoltage.transform.localPosition;
-        switch (direction)
+        switch (Direction)
         {
             case Direction.North:
                 rotationVoltage.z = 180f;
@@ -82,52 +57,27 @@ public class Battery : MonoBehaviour, ICircuitComponent
         labelVoltage.transform.localEulerAngles = rotationVoltage;
     }
 
-    public void SetShortCircuit(bool shortCircuit, bool forward)
-    {
-
-    }
-
-    public bool IsClosed()
-    {
-        return true;
-    }
-
-    public void Toggle()
-    {
-
-    }
-
-    public void SetVoltage(double newVoltage)
-    {
-
-    }
-
-    public void SetCurrent(double newCurrent)
-    {
-
-    }
-
     public void SelectEntered()
     {
-        isHeld = true;
+        IsHeld = true;
 
         // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
         GetComponent<BoxCollider>().enabled = true;
         GetComponent<SphereCollider>().enabled = true;
 
-        if (isPlaced)
+        if (IsPlaced)
         {
             var lab = GameObject.Find("CircuitLab").gameObject;
             var script = lab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, startingPeg);
+            script.RemoveComponent(this.gameObject, StartingPeg);
 
-            isPlaced = false;
+            IsPlaced = false;
         }
     }
 
     public void SelectExited()
     {
-        isHeld = false;
+        IsHeld = false;
 
         // Make sure gravity is enabled any time we release the object
         GetComponent<Rigidbody>().isKinematic = false;
