@@ -5,7 +5,7 @@ using TMPro;
 
 public class Switch : CircuitComponent
 {
-    public GameObject circuitLab;
+    // Public members set in Unity Object Inspector
     public GameObject pivot;
     public GameObject labelVoltage;
     public TMP_Text labelVoltageText;
@@ -21,13 +21,9 @@ public class Switch : CircuitComponent
     protected override void Update ()
     {
         // Show/hide the labels
-        var script = circuitLab.GetComponent<CircuitLab>();
-        if (script != null)
-        {
-            bool showLabels = script.showLabels && IsActive && !IsShortCircuit;
-            labelVoltage.gameObject.SetActive(showLabels);
-            labelCurrent.gameObject.SetActive(showLabels);
-        }
+        bool showLabels = Lab.showLabels && IsActive && !IsShortCircuit;
+        labelVoltage.gameObject.SetActive(showLabels);
+        labelCurrent.gameObject.SetActive(showLabels);
     }
 
     public override void SetActive(bool isActive, bool isForward)
@@ -86,11 +82,7 @@ public class Switch : CircuitComponent
         pivot.transform.localEulerAngles = rotation;
 
         // Trigger a new simulation since we may have just closed or opened a circuit
-        var script = circuitLab.GetComponent<ICircuitLab>();
-        if (script != null)
-        {
-            script.SimulateCircuit();
-        }
+        Lab.SimulateCircuit();
     }
 
     public override void SetVoltage(double voltage)
@@ -118,31 +110,5 @@ public class Switch : CircuitComponent
             // Update label text
             labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
         }
-    }
-
-    public void SelectEntered()
-    {
-        IsHeld = true;
-
-        // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
-        GetComponent<BoxCollider>().enabled = true;
-        GetComponent<SphereCollider>().enabled = true;
-
-        if (IsPlaced)
-        {
-            var script = circuitLab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, StartingPeg);
-
-            IsPlaced = false;
-        }
-    }
-
-    public void SelectExited()
-    {
-        IsHeld = false;
-
-        // Make sure gravity is enabled any time we release the object
-        GetComponent<Rigidbody>().isKinematic = false;
-        GetComponent<Rigidbody>().useGravity = true;
     }
 }

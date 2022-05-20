@@ -5,7 +5,7 @@ using TMPro;
 
 public class Bulb : CircuitComponent
 {
-    public GameObject circuitLab;
+    // Public members set in Unity Object Inspector
     public GameObject labelResistance;
     public TMP_Text labelResistanceText;
     public GameObject labelCurrent;
@@ -24,12 +24,8 @@ public class Bulb : CircuitComponent
     protected override void Update ()
     {
         // Show/hide the labels
-        var script = circuitLab.GetComponent<CircuitLab>();
-        if (script != null)
-        {
-            labelResistance.gameObject.SetActive(IsActive && script.showLabels);
-            labelCurrent.gameObject.SetActive(IsActive && script.showLabels);
-        }
+        labelResistance.gameObject.SetActive(IsActive && Lab.showLabels);
+        labelCurrent.gameObject.SetActive(IsActive && Lab.showLabels);
     }
 
     public override void SetActive(bool isActive, bool isForward)
@@ -115,32 +111,6 @@ public class Bulb : CircuitComponent
         Color baseColor = colors[emissionColorIdx];
         Color finalColor = baseColor * Mathf.Pow(2, intensity);
         filament.GetComponent<Renderer>().material.SetColor("_EmissionColor", finalColor);
-    }
-
-    public void SelectEntered()
-    {
-        IsHeld = true;
-
-        // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
-        GetComponent<BoxCollider>().enabled = true;
-        GetComponent<SphereCollider>().enabled = true;
-
-        if (IsPlaced)
-        {
-            var script = circuitLab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, StartingPeg);
-
-            IsPlaced = false;
-        }
-    }
-
-    public void SelectExited()
-    {
-        IsHeld = false;
-
-        // Make sure gravity is enabled any time we release the object
-        GetComponent<Rigidbody>().isKinematic = false;
-        GetComponent<Rigidbody>().useGravity = true;
     }
 
     IEnumerator PlaySound(AudioSource source, float delay)

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CircuitComponent : MonoBehaviour
 {
+    // Public members set in Unity Object Inspector
+    public CircuitLab Lab;
+
     public CircuitComponentType ComponentType { get; protected set; }
 
     public bool IsPlaced { get; protected set; }
@@ -68,6 +71,31 @@ public class CircuitComponent : MonoBehaviour
 
     public virtual void Toggle()
     {
+    }
+
+    public virtual void SelectEntered()
+    {
+        IsHeld = true;
+
+        // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
+        GetComponent<BoxCollider>().enabled = true;
+        GetComponent<SphereCollider>().enabled = true;
+
+        if (IsPlaced)
+        {
+            Lab.RemoveComponent(this.gameObject, StartingPeg);
+
+            IsPlaced = false;
+        }
+    }
+
+    public virtual void SelectExited()
+    {
+        IsHeld = false;
+
+        // Make sure gravity is enabled any time we release the object
+        GetComponent<Rigidbody>().isKinematic = false;
+        GetComponent<Rigidbody>().useGravity = true;
     }
 }
 

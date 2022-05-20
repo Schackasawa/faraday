@@ -722,9 +722,8 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                             {
                                 //script.SetActive(false, true);
                             }
-
-                            circuit.Remove(component);
                         }
+                        circuit.Remove(component);
                         return;
                     }
                 }

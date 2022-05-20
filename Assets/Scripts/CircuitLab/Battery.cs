@@ -5,7 +5,7 @@ using TMPro;
 
 public class Battery : CircuitComponent
 {
-    public GameObject circuitLab;
+    // Public members set in Unity Object Inspector
     public GameObject labelVoltage;
     public TMP_Text labelVoltageText;
 
@@ -20,11 +20,7 @@ public class Battery : CircuitComponent
     protected override void Update()
     {
         // Show/hide the labels
-        var script = circuitLab.GetComponent<CircuitLab>();
-        if (script != null)
-        {
-            labelVoltage.gameObject.SetActive(IsActive && script.showLabels);
-        }
+        labelVoltage.gameObject.SetActive(IsActive && Lab.showLabels);
     }
 
     public override void SetActive(bool isActive, bool isForward)
@@ -55,32 +51,5 @@ public class Battery : CircuitComponent
 
         // Apply label positioning
         labelVoltage.transform.localEulerAngles = rotationVoltage;
-    }
-
-    public void SelectEntered()
-    {
-        IsHeld = true;
-
-        // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
-        GetComponent<BoxCollider>().enabled = true;
-        GetComponent<SphereCollider>().enabled = true;
-
-        if (IsPlaced)
-        {
-            var lab = GameObject.Find("CircuitLab").gameObject;
-            var script = lab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, StartingPeg);
-
-            IsPlaced = false;
-        }
-    }
-
-    public void SelectExited()
-    {
-        IsHeld = false;
-
-        // Make sure gravity is enabled any time we release the object
-        GetComponent<Rigidbody>().isKinematic = false;
-        GetComponent<Rigidbody>().useGravity = true;
     }
 }

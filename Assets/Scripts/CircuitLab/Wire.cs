@@ -6,7 +6,7 @@ using TMPro;
 
 public class Wire : CircuitComponent
 {
-    public GameObject circuitLab;
+    // Public members set in Unity Object Inspector
     public float normalCircuitSpeed = 0.16f;
     public float shortCircuitSpeed = 0.40f;
     public Vector3 startPosition = new Vector3(0, 0.04f, 0);
@@ -64,13 +64,9 @@ public class Wire : CircuitComponent
             }
 
             // Show/hide the labels
-            var script = circuitLab.GetComponent<CircuitLab>();
-            if (script != null)
-            {
-                bool showLabels = script.showLabels && IsActive && !IsShortCircuit;
-                labelVoltage.gameObject.SetActive(showLabels);
-                labelCurrent.gameObject.SetActive(showLabels);
-            }
+            bool showLabels = Lab.showLabels && IsActive && !IsShortCircuit;
+            labelVoltage.gameObject.SetActive(showLabels);
+            labelCurrent.gameObject.SetActive(showLabels);
         }
     }
 
@@ -191,32 +187,6 @@ public class Wire : CircuitComponent
             // Update electron speed
             speed = normalCircuitSpeed * ((float)current / baseCurrent);
         }
-    }
-
-    public void SelectEntered()
-    {
-        IsHeld = true;
-
-        // Enable box and sphere colliders so this piece can be placed somewhere else on the board.
-        GetComponent<BoxCollider>().enabled = true;
-        GetComponent<SphereCollider>().enabled = true;
-
-        if (IsPlaced)
-        {
-            var script = circuitLab.GetComponent<ICircuitLab>();
-            script.RemoveComponent(this.gameObject, StartingPeg);
-
-            IsPlaced = false;
-        }
-    }
-
-    public void SelectExited()
-    {
-        IsHeld = false;
-
-        // Make sure gravity is enabled any time we release the object
-        GetComponent<Rigidbody>().isKinematic = false;
-        GetComponent<Rigidbody>().useGravity = true;
     }
 }
 

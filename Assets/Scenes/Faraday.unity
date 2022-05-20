@@ -1464,7 +1464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02fab5f4d35eff94cb2a8fd7b80acc4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circuitLab: {fileID: 827400518}
+  Lab: {fileID: 827400520}
   labelResistance: {fileID: 117344050}
   labelResistanceText: {fileID: 117344054}
   labelCurrent: {fileID: 117344049}
@@ -3626,7 +3626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ac129494ca9fc74696adb86a1620cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circuitLab: {fileID: 827400518}
+  Lab: {fileID: 0}
   labelResistance: {fileID: 1200568089}
   labelResistanceText: {fileID: 1200568091}
   labelCurrent: {fileID: 1144274748}
@@ -5547,7 +5547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8cc1b036fc8d240b1ff96622ae0cab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circuitLab: {fileID: 827400518}
+  Lab: {fileID: 827400520}
   normalCircuitSpeed: 0.16
   shortCircuitSpeed: 0.4
   startPosition: {x: 0, y: 0.08, z: 0}
@@ -7397,7 +7397,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ac129494ca9fc74696adb86a1620cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circuitLab: {fileID: 827400518}
+  Lab: {fileID: 827400520}
   labelResistance: {fileID: 712385654}
   labelResistanceText: {fileID: 712385655}
   labelCurrent: {fileID: 712385648}
@@ -10773,7 +10773,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09f23e1d5a05b464dadcf086690e1e0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circuitLab: {fileID: 827400518}
+  Lab: {fileID: 827400520}
   labelVoltage: {fileID: 931961720}
   labelVoltageText: {fileID: 931961721}
 --- !u!1 &931961720 stripped
@@ -14552,7 +14552,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c508fa27e952dbe42acacdfb4a4c5cdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circuitLab: {fileID: 827400518}
+  Lab: {fileID: 827400520}
   pivot: {fileID: 1320512351}
   labelVoltage: {fileID: 1703122596}
   labelVoltageText: {fileID: 1703122597}
@@ -19511,7 +19511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8cc1b036fc8d240b1ff96622ae0cab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circuitLab: {fileID: 827400518}
+  Lab: {fileID: 827400520}
   normalCircuitSpeed: 0.16
   shortCircuitSpeed: 0.4
   startPosition: {x: 0, y: 0.04, z: 0}
