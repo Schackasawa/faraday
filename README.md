@@ -10,8 +10,9 @@ This project uses the Unity game engine, Unity's XR integration framework, and <
 
 <ul>
   <li>Unlimited supply of circuit components, including batteries, switches, bulbs, motors, and wires</li>
-  <li>Audio feedback and current flow visualization when a valid circuit is completed</li>
-  <li>Short circuit detection with visual and auditory feedback</li>
+  <li>Components snap to grid when dropped for fool-proof circuit creation 
+  <li>Audio feedback and current flow visualization whenever a valid circuit is completed</li>
+  <li>Short circuit detection with visual and auditory feedback, indicating the exact components involved</li>
   <li>Adaptive components - motors change speed and bulbs change intensity based on level of current</li>
   <li>Interactive components - bulbs change color and switches open/close when pinched</li>
   <li>Label lever activates current, resistance, and voltage drop labels on active circuits</li>
