@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioTrigger : MonoBehaviour
 {
     public GameObject audioGameObject;
 
-    AudioSource clip;
+    private AudioSource clip;
 
     void Start()
     {

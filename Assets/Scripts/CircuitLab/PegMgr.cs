@@ -7,7 +7,6 @@ public class PegMgr : MonoBehaviour, IPeg
     // Public members set in Unity Object Inspector
     public AudioSource clickSound;
     public float clickStartTime = 0f;
-
     public float pegInterval = 0.1f;
 
     // Offset from the center of each short and long component
@@ -123,7 +122,6 @@ public class PegMgr : MonoBehaviour, IPeg
         // Find the locations of all 4 neighboring pegs
         Point coords = GetCoordinates();
         Point end = new Point(coords.x, coords.y);
-        //Debug.Log("row: " + coords.y + ", col: " + coords.x);
 
         string north = "Peg_" + (coords.y + pegOffset) + "_" + coords.x;
         Point ptNorth = new Point(coords.x, coords.y + pegOffset);
@@ -149,7 +147,7 @@ public class PegMgr : MonoBehaviour, IPeg
             }
         }
 
-        // Highlight each neighbor
+        // Highlight each neighbor when debugging
         //HighlightNeighbor(north, Color.red);
         //HighlightNeighbor(east, Color.yellow);
         //HighlightNeighbor(south, Color.green);
@@ -241,7 +239,9 @@ public class PegMgr : MonoBehaviour, IPeg
             }
         }
 
+        // Draw a visible line to the closest neighbor to aid in debugging
         //DrawLine(endpoint.transform.position, closestNeighbor.transform.position, Color.red);
+
         return closest;
     }
 
@@ -302,11 +302,6 @@ public class PegMgr : MonoBehaviour, IPeg
             clone.GetComponent<Rigidbody>().detectCollisions = false;
             var cloneScript = clone.GetComponent<CircuitComponent>();
             cloneScript.IsClone = true;
-
-            // Make the clone translucent
-            //var rend = clone.gameObject.GetComponent<Renderer>();
-            //var color = rend.material.color;
-            //rend.material.color = new Color(color.r, color.g, color.b, 0.5f);
 
             // Lock the clone in place
             clone.gameObject.GetComponent<Rigidbody>().useGravity = false;
