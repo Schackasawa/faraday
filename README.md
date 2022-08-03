@@ -1,5 +1,7 @@
 <h1>Project Faraday: Circuit Simulation in Virtual Reality</h1>
 
+[<img src="https://img.youtube.com/vi/rXlC2jIwGBw/maxresdefault.jpg" width="100%">](https://youtu.be/rXlC2jIwGBw)
+
 Project Faraday is an experiment in virtual reality education, allowing anyone with a VR headset to explore basic circuit design and develop an intuition for the way electricity behaves in the real world. Beginners of all ages can benefit from the ability to combine any number of wires, motors, bulbs and switches to construct arbitrarily complex experiments. Unlike traditional classroom education, virtual reality allows the student to actually see electron flow and its effects on various components in an accessible and fun environment, hopefully encouraging natural exploration and hands-on learning.
 
 <h2>Technology</h2>
