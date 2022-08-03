@@ -26,5 +26,5 @@ This project uses the Unity game engine, Unity's XR integration framework, and <
   
 <h2>Author</h2>
 
-All code outside of the SpiceSharp library designed, written, and tested by <a href="https://www.linkedin.com/in/dschack/">Darren Schack</a>, a Seattle-based full stack software engineer with a passion for technology and a particular interest in virtual reality.
+All code outside of the SpiceSharp library was designed, written, and tested by <a href="https://www.linkedin.com/in/dschack/">Darren Schack</a>, a Seattle-based full stack software engineer with a passion for technology and a particular interest in virtual reality.
 
