@@ -99,7 +99,7 @@ public class CircuitComponent : MonoBehaviour
     }
 }
 
-public enum CircuitComponentType { Wire, Battery, Bulb, Motor, Switch };
+public enum CircuitComponentType { Wire, Battery, Bulb, Motor, Switch, Balloon };
 public enum Direction { North, South, East, West };
 
 

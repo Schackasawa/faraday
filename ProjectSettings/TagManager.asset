@@ -12,6 +12,7 @@ TagManager:
   - Motor
   - Bulb
   - Peg
+  - Balloon
   layers:
   - Default
   - TransparentFX

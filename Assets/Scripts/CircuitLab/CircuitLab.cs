@@ -35,6 +35,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     public const float BatteryVoltage = 10f;
     public const float BulbResistance = 1000f;
     public const float MotorResistance = 2000f;
+    public const float BalloonResistance = 3000f;
 
     void Start()
     {
@@ -625,7 +626,8 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
 
         // Keep track of the number of resistors, so we'll know if we have a short circuit
         if ((component.ComponentType == CircuitComponentType.Bulb) ||
-            (component.ComponentType == CircuitComponentType.Motor))
+            (component.ComponentType == CircuitComponentType.Motor) ||
+            (component.ComponentType == CircuitComponentType.Balloon))
         {
             resistors++;
         }
@@ -772,6 +774,11 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 // Treat motors as simple resistors
                 entities.Add(new VoltageSource("V" + name, mid, start, 0f));
                 entities.Add(new Resistor(name, mid, end, MotorResistance));
+                break;
+            case CircuitComponentType.Balloon:
+                // Treat balloons as simple resistors
+                entities.Add(new VoltageSource("V" + name, mid, start, 0f));
+                entities.Add(new Resistor(name, mid, end, BalloonResistance));
                 break;
             case CircuitComponentType.Wire:
             case CircuitComponentType.Switch:
