@@ -1,6 +1,8 @@
 <h1>Project Faraday: Circuit Simulation in Virtual Reality</h1>
 
-Project Faraday is an experiment in virtual reality education, allowing anyone with a VR headset to explore basic circuit design and develop an intuition for the way electricity behaves in the real world. Beginners of all ages can benefit from the ability to combine any number of wires, motors, bulbs and switches to construct arbitrarily complex experiments. Unlike traditional classroom education, virtual reality allows the student to actually see electron flow and its effects on various components in an accessible and fun environment, hopefully encouraging natural exploration and hands-on learning.
+[<img src="https://img.youtube.com/vi/rXlC2jIwGBw/maxresdefault.jpg" width="100%">](https://youtu.be/rXlC2jIwGBw)
+
+Project Faraday is an experiment in virtual reality education, allowing anyone with a VR headset to explore basic circuit design and develop an intuition for the way electricity behaves in the real world. Beginners of all ages can benefit from the ability to combine any number of wires, motors, bulbs and switches to construct arbitrarily complex experiments. Unlike traditional classroom education, virtual reality allows the student to actually see electron flow and its effects on various components in an accessible and fun environment, hopefully encouraging natural exploration and hands-on learning. For a brief demonstration, <a href="https://youtu.be/rXlC2jIwGBw">click here.</a>
 
 <h2>Technology</h2>
 
@@ -24,5 +26,5 @@ This project uses the Unity game engine, Unity's XR integration framework, and <
   
 <h2>Author</h2>
 
-All code outside of the SpiceSharp library designed, written, and tested by <a href="https://www.linkedin.com/in/dschack/">Darren Schack</a>, a Seattle-based full stack software engineer with a passion for technology and a particular interest in virtual reality.
+All code outside of the SpiceSharp library was designed, written, and tested by <a href="https://www.linkedin.com/in/dschack/">Darren Schack</a>, a Seattle-based full stack software engineer with a passion for technology and a particular interest in virtual reality.
 
