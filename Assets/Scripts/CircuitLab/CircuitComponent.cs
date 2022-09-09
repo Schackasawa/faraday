@@ -69,7 +69,18 @@ public class CircuitComponent : MonoBehaviour
         Current = current;
     }
 
+    // Toggle the state of a binary component (for example, a switch)
     public virtual void Toggle()
+    {
+    }
+
+    // Adjust the behavior of a component with various modes
+    public virtual void Adjust()
+    {
+    }
+
+    // Reset any component-specific state that might need resetting
+    protected virtual void Reset()
     {
     }
 
@@ -87,6 +98,9 @@ public class CircuitComponent : MonoBehaviour
 
             IsPlaced = false;
         }
+
+        // Reinitialize component state
+        Reset();
     }
 
     public virtual void SelectExited()
@@ -99,7 +113,7 @@ public class CircuitComponent : MonoBehaviour
     }
 }
 
-public enum CircuitComponentType { Wire, Battery, Bulb, Motor, Switch, Balloon };
+public enum CircuitComponentType { Wire, Battery, Bulb, Motor, Switch, Balloon, Timer };
 public enum Direction { North, South, East, West };
 
 

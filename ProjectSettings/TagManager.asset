@@ -13,6 +13,7 @@ TagManager:
   - Bulb
   - Peg
   - Balloon
+  - Timer
   layers:
   - Default
   - TransparentFX
