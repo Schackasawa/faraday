@@ -5,7 +5,7 @@ using UnityEngine;
 public class Dispenser : MonoBehaviour, IDispenser
 {
     // Public members set in Unity Object Inspector
-    public enum ComponentTag { Wire, LongWire, Battery, Switch, Motor, Bulb, Balloon, Timer };
+    public enum ComponentTag { Wire, LongWire, Battery, Switch, Motor, Bulb, Balloon, Timer, Flute };
     public ComponentTag componentTag;
 
     float xSpeed = 90f;
