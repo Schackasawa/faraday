@@ -15,6 +15,7 @@ TagManager:
   - Balloon
   - Timer
   - Flute
+  - Button
   layers:
   - Default
   - TransparentFX

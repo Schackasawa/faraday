@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Rocker : MonoBehaviour
+public class ButtonPress : MonoBehaviour
 {
     private bool cooldownActive = false;
 
@@ -18,13 +18,21 @@ public class Rocker : MonoBehaviour
             {
                 script.Toggle();
 
-                // Set the rocker to the proper position by rotating the pivot
-                var rotation = transform.localEulerAngles;
-                rotation.y = -rotation.y;
-                transform.localEulerAngles = rotation;
-
                 cooldownActive = true;
-                Invoke("Cooldown", 0.5f);
+                Invoke("Cooldown", 0.1f);
+            }
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.name.Contains("Pinch"))
+        {
+            // Find our parent and toggle its state
+            var script = transform.parent.GetComponent<CircuitComponent>();
+            if (script != null)
+            {
+                script.Toggle();
             }
         }
     }

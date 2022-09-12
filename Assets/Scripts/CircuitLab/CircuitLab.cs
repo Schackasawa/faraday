@@ -790,8 +790,9 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
             case CircuitComponentType.Wire:
             case CircuitComponentType.Switch:
             case CircuitComponentType.Timer:
+            case CircuitComponentType.Button:
             default:
-                // Treat wires and switches as lossless transmission lines
+                // Treat all types of wires and switches as lossless transmission lines
                 entities.Add(new VoltageSource("V" + name, mid, start, 0f));
                 entities.Add(new LosslessTransmissionLine(name, mid, end, end, mid));
                 break;

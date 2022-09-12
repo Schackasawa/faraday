@@ -114,14 +114,6 @@ public class Timer : CircuitComponent
         }
     }
 
-    IEnumerator PlaySound(AudioSource source, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        source.Stop();
-        source.Play();
-    }
-
     public override void Toggle()
     {
         // If the timer has been disabled, don't do anything
@@ -169,7 +161,7 @@ public class Timer : CircuitComponent
         Voltage = voltage;
 
         // Update label text
-        labelVoltageText.text = voltage.ToString("0.##") + "V";
+        labelVoltageText.text = voltage.ToString("0.#") + "V";
     }
 
     public override void SetCurrent(double current)
@@ -187,7 +179,7 @@ public class Timer : CircuitComponent
         else
         {
             // Update label text
-            labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
+            labelCurrentText.text = (current * 1000f).ToString("0.#") + "mA";
         }
     }
 }

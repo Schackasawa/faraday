@@ -14,7 +14,7 @@ public class Battery : CircuitComponent
     protected override void Start()
     {
         // Set voltage label text
-        labelVoltageText.text = CircuitLab.BatteryVoltage.ToString("0.##") + "V";
+        labelVoltageText.text = CircuitLab.BatteryVoltage.ToString("0.#") + "V";
     }
 
     protected override void Update()

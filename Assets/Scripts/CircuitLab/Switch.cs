@@ -11,6 +11,7 @@ public class Switch : CircuitComponent
     public TMP_Text labelVoltageText;
     public GameObject labelCurrent;
     public TMP_Text labelCurrentText;
+    public AudioSource switchSound;
 
     public Switch() : base(CircuitComponentType.Switch)
     {
@@ -20,8 +21,10 @@ public class Switch : CircuitComponent
 
     protected override void Update ()
     {
+        bool sufficientCurrent = (Current > 0.0000001);
+
         // Show/hide the labels
-        bool showLabels = Lab.showLabels && IsActive && !IsShortCircuit;
+        bool showLabels = Lab.showLabels && IsActive && sufficientCurrent && !IsShortCircuit;
         labelVoltage.gameObject.SetActive(showLabels);
         labelCurrent.gameObject.SetActive(showLabels);
     }
@@ -64,12 +67,6 @@ public class Switch : CircuitComponent
     public override void SetShortCircuit(bool isShortCircuit, bool isForward)
     {
         IsShortCircuit = isShortCircuit;
-        if (isShortCircuit)
-        {
-            // Hide the labels
-            labelVoltage.gameObject.SetActive(false);
-            labelCurrent.gameObject.SetActive(false);
-        }
     }
 
     public override void Toggle()
@@ -81,6 +78,8 @@ public class Switch : CircuitComponent
         rotation.z = IsClosed ? 0 : -45f;
         pivot.transform.localEulerAngles = rotation;
 
+        StartCoroutine(PlaySound(switchSound, 0f));
+
         // Trigger a new simulation since we may have just closed or opened a circuit
         Lab.SimulateCircuit();
     }
@@ -90,25 +89,14 @@ public class Switch : CircuitComponent
         Voltage = voltage;
 
         // Update label text
-        labelVoltageText.text = voltage.ToString("0.##") + "V";
+        labelVoltageText.text = voltage.ToString("0.#") + "V";
     }
 
     public override void SetCurrent(double current)
     {
         Current = current;
 
-        // If we don't have a significant positive current, then we are inactive, even if
-        // we are technically part of an active circuit
-        if (current <= 0.0000001)
-        {
-            // Hide the labels
-            labelVoltage.gameObject.SetActive(false);
-            labelCurrent.gameObject.SetActive(false);
-        }
-        else
-        {
-            // Update label text
-            labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
-        }
+        // Update label text
+        labelCurrentText.text = (current * 1000f).ToString("0.#") + "mA";
     }
 }

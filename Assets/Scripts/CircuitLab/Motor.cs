@@ -42,7 +42,7 @@ public class Motor : CircuitComponent
         IsActive = isActive;
 
         // Set resistance label text
-        labelResistanceText.text = CircuitLab.MotorResistance.ToString("0.##") + "Ω";
+        labelResistanceText.text = CircuitLab.MotorResistance.ToString("0.#") + "Ω";
 
         // Make sure label is right side up
         var rotationResistance = labelResistance.transform.localEulerAngles;
@@ -92,7 +92,7 @@ public class Motor : CircuitComponent
         else
         {
             // Update label text
-            labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
+            labelCurrentText.text = (current * 1000f).ToString("0.#") + "mA";
 
             // Update motor speed
             speed = normalSpeed * ((float)current / baseCurrent);

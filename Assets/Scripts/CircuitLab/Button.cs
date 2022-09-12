@@ -1,30 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
-using TMPro;
 
-public class Wire : CircuitComponent
+public class Button : CircuitComponent
 {
     // Public members set in Unity Object Inspector
     public float normalCircuitSpeed = 0.16f;
     public float shortCircuitSpeed = 0.40f;
     public Vector3 startPosition = new Vector3(0, 0.04f, 0);
     public Vector3 endPosition = new Vector3(0, -0.04f, 0);
-    public GameObject labelVoltage;
-    public TMP_Text labelVoltageText;
-    public GameObject labelCurrent;
-    public TMP_Text labelCurrentText;
+    public GameObject button;
     public Color normalEmissionColor;
     public Color shortEmissionColor;
     public float emissionIntensity;
+    public AudioSource buttonPressAudio;
 
     Color32 normalBaseColor = new Color32(56, 206, 76, 255);
     Color32 shortBaseColor = new Color32(88, 18, 18, 255);
     float baseCurrent = 0.005f;
     float speed = 0f;
 
-    public Wire() : base(CircuitComponentType.Wire) { }
+    public Button() : base(CircuitComponentType.Button)
+    {
+        // Switches start off in the open position
+        IsClosed = false;
+    }
 
     protected override void Update ()
     {
@@ -62,12 +62,6 @@ public class Wire : CircuitComponent
                     }
                 }
             }
-
-            // Show/hide the labels
-            bool sufficientCurrent = (Current > 0.0000001);
-            bool showLabels = Lab.showLabels && IsActive && sufficientCurrent && !IsShortCircuit;
-            labelVoltage.gameObject.SetActive(showLabels);
-            labelCurrent.gameObject.SetActive(showLabels);
         }
     }
 
@@ -107,36 +101,6 @@ public class Wire : CircuitComponent
 
         // Change electrons to green
         SetElectronColor(normalEmissionColor, normalBaseColor);
-
-        // Make sure label is right side up
-        var rotationVoltage = labelVoltage.transform.localEulerAngles;
-        var positionVoltage = labelVoltage.transform.localPosition;
-        var rotationCurrent = labelCurrent.transform.localEulerAngles;
-        var positionCurrent = labelCurrent.transform.localPosition;
-        switch (Direction)
-        {
-            case Direction.North:
-            case Direction.East:
-                rotationVoltage.z = rotationCurrent.z = -90f;
-                positionVoltage.x = -0.022f;
-                positionCurrent.x = 0.022f;
-                break;
-            case Direction.South:
-            case Direction.West:
-                rotationVoltage.z = rotationCurrent.z = 90f;
-                positionVoltage.x = 0.022f;
-                positionCurrent.x = -0.022f;
-                break;
-            default:
-                Debug.Log("Unrecognized direction!");
-                break;
-        }
-
-        // Apply label positioning
-        labelVoltage.transform.localEulerAngles = rotationVoltage;
-        labelVoltage.transform.localPosition = positionVoltage;
-        labelCurrent.transform.localEulerAngles = rotationCurrent;
-        labelCurrent.transform.localPosition = positionCurrent;
     }
 
     public override void SetShortCircuit(bool isShortCircuit, bool isForward)
@@ -153,12 +117,28 @@ public class Wire : CircuitComponent
         }
     }
 
+    public override void Toggle()
+    {
+        // The button shouldn't be functional until it is placed on the breadboard
+        if (!IsPlaced)
+            return;
+
+        IsClosed = !IsClosed;
+
+        // Lower the button when pressed
+        var position = button.transform.localPosition;
+        position.z = IsClosed ? 0.003f : 0.006f;
+        button.transform.localPosition = position;
+
+        StartCoroutine(PlaySound(buttonPressAudio, 0f));
+
+        // Trigger a new simulation since we may have just closed or opened a circuit
+        Lab.SimulateCircuit();
+    }
+
     public override void SetVoltage(double voltage)
     {
         Voltage = voltage;
-
-        // Update label text
-        labelVoltageText.text = voltage.ToString("0.#") + "V";
     }
 
     public override void SetCurrent(double current)
@@ -174,9 +154,6 @@ public class Wire : CircuitComponent
         }
         else
         {
-            // Update label text
-            labelCurrentText.text = (current * 1000f).ToString("0.#") + "mA";
-
             // Update electron speed
             speed = normalCircuitSpeed * ((float)current / baseCurrent);
         }

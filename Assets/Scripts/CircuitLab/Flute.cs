@@ -42,7 +42,7 @@ public class Flute : CircuitComponent
         IsActive = isActive;
 
         // Set resistance label text
-        labelResistanceText.text = CircuitLab.FluteResistance.ToString("0.##") + "Ω";
+        labelResistanceText.text = CircuitLab.FluteResistance.ToString("0.#") + "Ω";
 
         // Make sure label is right side up
         var rotationResistance = labelResistance.transform.localEulerAngles;
@@ -82,15 +82,7 @@ public class Flute : CircuitComponent
         Current = current;
 
         // Update label text
-        labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
-    }
-
-    IEnumerator PlaySound(AudioSource source, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        source.Stop();
-        source.Play();
+        labelCurrentText.text = (current * 1000f).ToString("0.#") + "mA";
     }
 
     void OnTriggerEnter(Collider other)

@@ -23,9 +23,11 @@ public class Bulb : CircuitComponent
 
     protected override void Update ()
     {
+        bool sufficientCurrent = (Current > 0.0000001);
+
         // Show/hide the labels
-        labelResistance.gameObject.SetActive(IsActive && Lab.showLabels);
-        labelCurrent.gameObject.SetActive(IsActive && Lab.showLabels);
+        labelResistance.gameObject.SetActive(IsActive && sufficientCurrent && Lab.showLabels);
+        labelCurrent.gameObject.SetActive(IsActive && sufficientCurrent && Lab.showLabels);
     }
 
     public override void SetActive(bool isActive, bool isForward)
@@ -43,7 +45,7 @@ public class Bulb : CircuitComponent
         IsActive = isActive;
 
         // Set resistance label text
-        labelResistanceText.text = CircuitLab.BulbResistance.ToString("0.##") + "Ω";
+        labelResistanceText.text = CircuitLab.BulbResistance.ToString("0.#") + "Ω";
 
         // Make sure label is right side up
         var rotationResistance = labelResistance.transform.localEulerAngles;
@@ -93,7 +95,7 @@ public class Bulb : CircuitComponent
         Current = current;
 
         // Update label text
-        labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
+        labelCurrentText.text = (current * 1000f).ToString("0.#") + "mA";
 
         // Calculate light intensity based on current
         float maxCurrent = 0.01f;
@@ -111,14 +113,6 @@ public class Bulb : CircuitComponent
         Color baseColor = colors[emissionColorIdx];
         Color finalColor = baseColor * Mathf.Pow(2, intensity);
         filament.GetComponent<Renderer>().material.SetColor("_EmissionColor", finalColor);
-    }
-
-    IEnumerator PlaySound(AudioSource source, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        source.Stop();
-        source.Play();
     }
 
     void OnTriggerEnter(Collider other)

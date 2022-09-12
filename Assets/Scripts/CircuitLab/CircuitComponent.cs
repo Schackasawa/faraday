@@ -111,9 +111,17 @@ public class CircuitComponent : MonoBehaviour
         GetComponent<Rigidbody>().isKinematic = false;
         GetComponent<Rigidbody>().useGravity = true;
     }
+
+    protected IEnumerator PlaySound(AudioSource source, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        source.Stop();
+        source.Play();
+    }
 }
 
-public enum CircuitComponentType { Wire, Battery, Bulb, Motor, Switch, Balloon, Timer, Flute };
+public enum CircuitComponentType { Wire, Battery, Bulb, Motor, Switch, Balloon, Timer, Flute, Button };
 public enum Direction { North, South, East, West };
 
 

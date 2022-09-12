@@ -23,14 +23,6 @@ public class Balloon : CircuitComponent
 
     public Balloon() : base(CircuitComponentType.Balloon) { }
 
-    IEnumerator PlaySound(AudioSource source, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        source.Stop();
-        source.Play();
-    }
-
     protected override void Update()
     {
         if (IsActive)
@@ -72,7 +64,7 @@ public class Balloon : CircuitComponent
         IsActive = isActive;
 
         // Set resistance label text
-        labelResistanceText.text = CircuitLab.BalloonResistance.ToString("0.##") + "Ω";
+        labelResistanceText.text = CircuitLab.BalloonResistance.ToString("0.#") + "Ω";
 
         // Make sure label is right side up
         var rotationResistance = labelResistance.transform.localEulerAngles;
@@ -122,7 +114,7 @@ public class Balloon : CircuitComponent
         else
         {
             // Update label text
-            labelCurrentText.text = (current * 1000f).ToString("0.##") + "mA";
+            labelCurrentText.text = (current * 1000f).ToString("0.#") + "mA";
 
             // Update balloon inflation speed
             speed = normalSpeed * ((float)current / baseCurrent);
