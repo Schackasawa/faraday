@@ -2,43 +2,54 @@
 
 public class ButtonPress : MonoBehaviour
 {
+    public CapsuleCollider buttonCollider;
+
+    private bool isPressed = false;
+    private Collider otherCollider = null;
     private bool cooldownActive = false;
 
-    void Start() { }
-    void Update() { }
-
-    void OnTriggerEnter(Collider other)
+    void Update()
     {
-        if (!cooldownActive && 
-            other.gameObject.name.Contains("Pinch"))
+        if (isPressed)
         {
-            // Find our parent and toggle its state
-            var script = transform.parent.GetComponent<CircuitComponent>();
-            if (script != null)
+            // Check if we are still colliding. If not, release the button.
+            if (!otherCollider.bounds.Intersects(buttonCollider.bounds))
             {
-                script.Toggle();
-
-                cooldownActive = true;
-                Invoke("Cooldown", 0.1f);
+                // Find our parent and toggle its state
+                ToggleParent();
+                isPressed = false;
             }
         }
     }
 
-    void OnTriggerExit(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name.Contains("Pinch"))
+        if (!cooldownActive && !isPressed && 
+            other.gameObject.name.Contains("Pinch"))
         {
+            isPressed = true;
+            otherCollider = other;
+
             // Find our parent and toggle its state
-            var script = transform.parent.GetComponent<CircuitComponent>();
-            if (script != null)
-            {
-                script.Toggle();
-            }
+            ToggleParent();
+
+            // Don't allow another press for a little while to prevent flickering
+            cooldownActive = true;
+            Invoke("Cooldown", 0.1f);
         }
     }
 
     void Cooldown()
     {
         cooldownActive = false;
+    }
+
+    void ToggleParent()
+    {
+        var script = transform.parent.GetComponent<CircuitComponent>();
+        if (script != null)
+        {
+            script.Toggle();
+        }
     }
 }

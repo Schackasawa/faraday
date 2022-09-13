@@ -130,7 +130,9 @@ public class Button : CircuitComponent
         position.z = IsClosed ? 0.003f : 0.006f;
         button.transform.localPosition = position;
 
-        StartCoroutine(PlaySound(buttonPressAudio, 0f));
+        // Click when the button is first pressed
+        if (IsClosed)
+            StartCoroutine(PlaySound(buttonPressAudio, 0f));
 
         // Trigger a new simulation since we may have just closed or opened a circuit
         Lab.SimulateCircuit();

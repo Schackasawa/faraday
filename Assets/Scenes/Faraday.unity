@@ -15219,7 +15219,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37bc7ee1a35d90648a2ac51dd347eaab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource1: {fileID: 1320512350}
 --- !u!114 &1320512355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15451,6 +15450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8619e0e73dbc00e44b0406dcbecf779f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonCollider: {fileID: 2106546352}
 --- !u!1001 &1346386572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24676,38 +24676,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d9433c6a6b7ce64bb78296fcb2a9d23, type: 3}
---- !u!1 &2106546352 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 426574290439419138, guid: 1d9433c6a6b7ce64bb78296fcb2a9d23, type: 3}
+--- !u!136 &2106546352 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 5694555020752114868, guid: 1d9433c6a6b7ce64bb78296fcb2a9d23, type: 3}
   m_PrefabInstance: {fileID: 2106546351}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2106546353 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7473089418130891186, guid: 1d9433c6a6b7ce64bb78296fcb2a9d23, type: 3}
-  m_PrefabInstance: {fileID: 2106546351}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2106546352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &2106546354 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3521556661554089946, guid: 1d9433c6a6b7ce64bb78296fcb2a9d23, type: 3}
-  m_PrefabInstance: {fileID: 2106546351}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2106546355 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4496075268812201932, guid: 1d9433c6a6b7ce64bb78296fcb2a9d23, type: 3}
-  m_PrefabInstance: {fileID: 2106546351}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2106546354}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2106546356 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5575501952818378301, guid: 1d9433c6a6b7ce64bb78296fcb2a9d23, type: 3}
@@ -24731,10 +24704,6 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0.04, z: 0}
   endPosition: {x: 0, y: -0.04, z: 0}
   button: {fileID: 1346256109}
-  labelVoltage: {fileID: 2106546354}
-  labelVoltageText: {fileID: 2106546355}
-  labelCurrent: {fileID: 2106546352}
-  labelCurrentText: {fileID: 2106546353}
   normalEmissionColor: {r: 0, g: 1, b: 0, a: 0}
   shortEmissionColor: {r: 1, g: 0, b: 0, a: 0}
   emissionIntensity: 3
