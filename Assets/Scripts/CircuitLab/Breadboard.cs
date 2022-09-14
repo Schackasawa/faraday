@@ -9,7 +9,7 @@ using SpiceSharp.Simulations;
 public class PlacedComponent
 {
     public GameObject GameObject { get; set; }
-    public CircuitComponentType ComponentType { get; set; }
+    public CircuitComponent Component { get; private set; }
     public Point Start { get; set; }
     public Point End { get; set; }
     public int Generation { get; set; }
@@ -21,12 +21,18 @@ public class PlacedComponent
     public bool ActiveCircuit { get; set; }
     public bool ActiveShort { get; set; }
 
-    public PlacedComponent(GameObject gameObject, CircuitComponentType type, Point start, Point end)
+    public PlacedComponent(GameObject gameObject, Point start, Point end)
     {
         GameObject = gameObject;
-        ComponentType = type;
         Start = start;
         End = end;
+
+        // Get the underlying component object so we can call component-specific methods
+        Component = gameObject.GetComponent<CircuitComponent>();
+        if (Component == null)
+        {
+            Debug.Log("Failed to find CircuitComponent script for " + gameObject.name);
+        }
     }
 }
 

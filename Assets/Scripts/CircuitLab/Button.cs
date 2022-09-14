@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Button : CircuitComponent
+public class Button : CircuitComponent, IConductor
 {
     // Public members set in Unity Object Inspector
     public float normalCircuitSpeed = 0.16f;
@@ -20,7 +20,7 @@ public class Button : CircuitComponent
     float baseCurrent = 0.005f;
     float speed = 0f;
 
-    public Button() : base(CircuitComponentType.Button)
+    public Button()
     {
         // Switches start off in the open position
         IsClosed = false;

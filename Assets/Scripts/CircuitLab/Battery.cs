@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Battery : CircuitComponent
+public class Battery : CircuitComponent, IBattery
 {
     // Public members set in Unity Object Inspector
     public GameObject labelVoltage;
     public TMP_Text labelVoltageText;
 
-    public Battery() : base(CircuitComponentType.Battery) { }
+    public float BatteryVoltage { get; private set; }
+
+    public Battery()
+    {
+        BatteryVoltage = 10f;
+    }
 
     protected override void Start()
     {
         // Set voltage label text
-        labelVoltageText.text = CircuitLab.BatteryVoltage.ToString("0.#") + "V";
+        labelVoltageText.text = BatteryVoltage.ToString("0.#") + "V";
     }
 
     protected override void Update()

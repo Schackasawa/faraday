@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using TMPro;
 
-public class Wire : CircuitComponent
+public class Wire : CircuitComponent, IConductor
 {
     // Public members set in Unity Object Inspector
     public float normalCircuitSpeed = 0.16f;
@@ -24,7 +24,7 @@ public class Wire : CircuitComponent
     float baseCurrent = 0.005f;
     float speed = 0f;
 
-    public Wire() : base(CircuitComponentType.Wire) { }
+    public Wire() { }
 
     protected override void Update ()
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Motor : CircuitComponent
+public class Motor : CircuitComponent, IResistor
 {
     // Public members set in Unity Object Inspector
     public GameObject labelResistance;
@@ -15,10 +15,15 @@ public class Motor : CircuitComponent
     float baseCurrent = 0.005f;
     float normalSpeed = 600f;
 
-    public Motor() : base(CircuitComponentType.Motor) { }
+    public float Resistance { get; private set; }
 
-    protected override void Update () {
+    public Motor()
+    { 
+        Resistance = 2000f;
+    }
 
+    protected override void Update () 
+    {
         if (IsActive)
         {
             float step = speed * Time.deltaTime;
@@ -42,7 +47,7 @@ public class Motor : CircuitComponent
         IsActive = isActive;
 
         // Set resistance label text
-        labelResistanceText.text = CircuitLab.MotorResistance.ToString("0.#") + "Ω";
+        labelResistanceText.text = Resistance.ToString("0.#") + "Ω";
 
         // Make sure label is right side up
         var rotationResistance = labelResistance.transform.localEulerAngles;

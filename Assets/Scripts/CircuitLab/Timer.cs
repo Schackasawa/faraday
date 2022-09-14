@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Timer : CircuitComponent
+public class Timer : CircuitComponent, IConductor
 {
     // Public members set in Unity Object Inspector
     public GameObject pivot;
@@ -22,7 +22,7 @@ public class Timer : CircuitComponent
     private DateTime lastSwitch;
     private int lastTimeoutSeconds;
 
-    public Timer() : base(CircuitComponentType.Timer)
+    public Timer()
     {
         // Timers start off in the closed position
         IsClosed = true;

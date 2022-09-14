@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Switch : CircuitComponent
+public class Switch : CircuitComponent, IConductor
 {
     // Public members set in Unity Object Inspector
     public GameObject pivot;
@@ -13,7 +13,7 @@ public class Switch : CircuitComponent
     public TMP_Text labelCurrentText;
     public AudioSource switchSound;
 
-    public Switch() : base(CircuitComponentType.Switch)
+    public Switch()
     {
         // Switches start off in the open position
         IsClosed = false;

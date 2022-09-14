@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Flute : CircuitComponent
+public class Flute : CircuitComponent, IResistor
 {
     // Public members set in Unity Object Inspector
     public GameObject labelResistance;
@@ -22,9 +22,14 @@ public class Flute : CircuitComponent
     private int noteIndex = 0;
     private string[] notes = new string[12] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
-    public Flute() : base(CircuitComponentType.Flute) { }
+    public float Resistance { get; private set; }
 
-    protected override void Update ()
+    public Flute()
+    {
+        Resistance = 2500f;
+    }
+
+protected override void Update ()
     {
         // Show/hide the labels
         labelResistance.gameObject.SetActive(IsActive && Lab.showLabels);
@@ -33,7 +38,7 @@ public class Flute : CircuitComponent
 
     public override void SetActive(bool isActive, bool isForward)
     {
-        if (!IsActive && isActive)
+        if (!IsActive && isActive && (Current > 0))
         {
             // Play the note once when we are first activated
             PlayFlute();
@@ -42,7 +47,7 @@ public class Flute : CircuitComponent
         IsActive = isActive;
 
         // Set resistance label text
-        labelResistanceText.text = CircuitLab.FluteResistance.ToString("0.#") + "Ω";
+        labelResistanceText.text = Resistance.ToString("0.#") + "Ω";
 
         // Make sure label is right side up
         var rotationResistance = labelResistance.transform.localEulerAngles;

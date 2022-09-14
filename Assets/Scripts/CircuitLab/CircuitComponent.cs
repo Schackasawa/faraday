@@ -7,8 +7,6 @@ public class CircuitComponent : MonoBehaviour
     // Public members set in Unity Object Inspector
     public CircuitLab Lab;
 
-    public CircuitComponentType ComponentType { get; protected set; }
-
     public bool IsPlaced { get; protected set; }
     public bool IsHeld { get; protected set; }
     public bool IsClone { get; set; }
@@ -22,10 +20,8 @@ public class CircuitComponent : MonoBehaviour
     protected double Voltage { get; set; }
     protected double Current { get; set; }
     
-    protected CircuitComponent(CircuitComponentType type)
+    protected CircuitComponent()
     {
-        ComponentType = type;
-
         IsPlaced = false;
         IsHeld = false;
         IsClone = false;
@@ -57,6 +53,11 @@ public class CircuitComponent : MonoBehaviour
     {
         IsShortCircuit = isShortCircuit;
         IsForward = isForward;
+    }
+
+    public double GetVoltage()
+    {
+        return Voltage;
     }
 
     public virtual void SetVoltage(double voltage)
@@ -121,7 +122,6 @@ public class CircuitComponent : MonoBehaviour
     }
 }
 
-public enum CircuitComponentType { Wire, Battery, Bulb, Motor, Switch, Balloon, Timer, Flute, Button };
 public enum Direction { North, South, East, West };
 
 

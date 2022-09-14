@@ -31,13 +31,6 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     float yHandleStart = 0f;
     float yTableStart = 0f;
 
-    // Component-related constants
-    public const float BatteryVoltage = 10f;
-    public const float BulbResistance = 1000f;
-    public const float MotorResistance = 2000f;
-    public const float BalloonResistance = 3000f;
-    public const float FluteResistance = 2500f;
-
     void Start()
     {
         // Record the initial height of the handle so we can move the whole board when the handle moves
@@ -153,7 +146,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         }
 
         // Create a component object and link it to the starting and ending pegs
-        PlacedComponent newComponent = new PlacedComponent(component, cp.ComponentType, start, end);
+        PlacedComponent newComponent = new PlacedComponent(component, start, end);
         board.AddComponent(newComponent);
 
         // Hide any pegs that we are blocking with the new component
@@ -196,7 +189,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
             script.SetActive(false, false);
         }
 
-        // Run a new circuit simulation so that any circuits we've just broken gets deactivated
+        // Run a new circuit simulation so that any circuits we've just broken get deactivated
         SimulateCircuit();
     }
 
@@ -379,42 +372,6 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         }
     }
 
-    private void DeactivateComponent(PlacedComponent component)
-    {
-        var script = component.GameObject.GetComponent<CircuitComponent>();
-        if (script != null)
-        {
-            script.SetActive(false, false);
-        }
-    }
-
-    private void SetShortComponent(PlacedComponent component, bool isShortCircuit, bool isForward)
-    {
-        var script = component.GameObject.GetComponent<CircuitComponent>();
-        if (script != null)
-        {
-            script.SetShortCircuit(isShortCircuit, isForward);
-        }
-    }
-
-    private void SetVoltage(PlacedComponent component, double voltage)
-    {
-        var script = component.GameObject.GetComponent<CircuitComponent>();
-        if (script != null)
-        {
-            script.SetVoltage(voltage);
-        }
-    }
-
-    private void SetCurrent(PlacedComponent component, double current)
-    {
-        var script = component.GameObject.GetComponent<CircuitComponent>();
-        if (script != null)
-        {
-            script.SetCurrent(current);
-        }
-    }
-
     public void SimulateCircuit()
     {
         //Debug.Log("SIMULATE START");
@@ -426,7 +383,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         List<PlacedComponent> batteries = new List<PlacedComponent>();
         foreach (PlacedComponent component in board.Components)
         {
-            if (component.ComponentType == CircuitComponentType.Battery)
+            if (component.Component is IBattery)
             {
                 batteries.Add(component);
             }
@@ -472,11 +429,11 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                     // other connected components.
                     if (component.ShortCircuitGeneration == gen)
                     {
-                        SetShortComponent(component, true, component.ShortCircuitForward);
+                        component.Component.SetShortCircuit(true, component.ShortCircuitForward);
                     }
                     else
                     {
-                        DeactivateComponent(component);
+                        component.Component.SetActive(false, false);
                     }
                 }
 
@@ -499,7 +456,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 // Create exports so we can access component properties
                 foreach (PlacedComponent component in components)
                 {
-                    bool isBattery = (component.ComponentType == CircuitComponentType.Battery);
+                    bool isBattery = (component.Component is IBattery);
 
                     if (component.Generation == gen)
                     {
@@ -533,11 +490,11 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                         {
                             // Update the voltage value
                             var voltage = component.VoltageExport.Value - minVoltage;
-                            SetVoltage(component, voltage);
+                            component.Component.SetVoltage(voltage);
 
                             // Update the current value
                             var current = component.CurrentExport.Value;
-                            SetCurrent(component, current);
+                            component.Component.SetCurrent(current);
                         }
                     }
                 };
@@ -578,7 +535,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                     // Deactivate all components in this circuit
                     foreach (PlacedComponent component in components)
                     {
-                        DeactivateComponent(component);
+                        component.Component.SetActive(false, false);
                     }
                 }
             }
@@ -595,7 +552,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         {
             if (component.Generation != gen)
             {
-                DeactivateComponent(component);
+                component.Component.SetActive(false, false);
             }
         }
 
@@ -604,7 +561,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         {
             if (component.ShortCircuitGeneration != gen)
             {
-                SetShortComponent(component, false, false);
+                component.Component.SetShortCircuit(false, false);
             }
         }
 
@@ -626,10 +583,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         components.Add(component);
 
         // Keep track of the number of resistors, so we'll know if we have a short circuit
-        if ((component.ComponentType == CircuitComponentType.Bulb) ||
-            (component.ComponentType == CircuitComponentType.Motor) ||
-            (component.ComponentType == CircuitComponentType.Balloon) ||
-            (component.ComponentType == CircuitComponentType.Flute))
+        if (component.Component is IResistor)
         {
             resistors++;
         }
@@ -655,10 +609,10 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
             }
 
             // Check if we found the battery again. If so, make sure it's the negative terminal.
-            //Debug.Log("--- NEXT COMPONENT (" + nextComponent.GameObject.name + ") TYPE = " + nextComponent.ComponentType);
+            //Debug.Log("--- NEXT COMPONENT (" + nextComponent.GameObject.name + ")" );
             //Debug.Log("--- NEXT POSITION = " + nextPosition.x + "," + nextPosition.y);
             //Debug.Log("--- NEXT COMPONENT START = " + nextComponent.Start.x + "," + nextComponent.Start.y);
-            //Debug.Log("--- circuit[0] (" + circuit[0].GameObject.name + ") type = " + circuit[0].ComponentType);
+            //Debug.Log("--- circuit[0] (" + circuit[0].GameObject.name + ")" );
             if ((nextComponent == circuit[0]) &&
                 (nextPosition.x == nextComponent.Start.x) &&
                 (nextPosition.y == nextComponent.Start.y))
@@ -742,60 +696,45 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         circuit.Remove(component);
     }
 
-    void AddSpiceSharpEntity(List<SpiceSharp.Entities.Entity> entities, PlacedComponent component, bool forward)
+    void AddSpiceSharpEntity(List<SpiceSharp.Entities.Entity> entities, PlacedComponent placedComponent, bool forward)
     {
-        string name = component.GameObject.name;
-        string start = forward ? component.Start.ToString() : component.End.ToString();
-        string end = forward ? component.End.ToString() : component.Start.ToString();
+        string name = placedComponent.GameObject.name;
+        string start = forward ? placedComponent.Start.ToString() : placedComponent.End.ToString();
+        string end = forward ? placedComponent.End.ToString() : placedComponent.Start.ToString();
         string mid = name;
+        CircuitComponent component = placedComponent.Component;
 
-        // Add the appropriate SpiceSharp component. Each component will also have a 0 voltage source
-        // added next to it to act as an ammeter.
-        switch (component.ComponentType)
+        // Add the appropriate SpiceSharp component. Each component will
+        // also have a 0 voltage source added next to it to act as an ammeter.
+        if (component is IBattery battery)
         {
-            case CircuitComponentType.Battery:
-                // If this is the first battery we are adding, make sure one of the ends is specified as 
-                // ground, or "0" Volt point of reference.
-                if (entities.Count == 0)
-                {
-                    entities.Add(new VoltageSource("V" + name, start, "0", 0f));
-                    entities.Add(new VoltageSource(name, "0", end, BatteryVoltage));
-                }
-                else
-                {
-                    entities.Add(new VoltageSource("V" + name, start, mid, 0f));
-                    entities.Add(new VoltageSource(name, mid, end, BatteryVoltage));
-                }
-                break;
-            case CircuitComponentType.Bulb:
-                // Treat bulbs as simple resistors
-                entities.Add(new VoltageSource("V" + name, mid, start, 0f));
-                entities.Add(new Resistor(name, mid, end, BulbResistance));
-                break;
-            case CircuitComponentType.Motor:
-                // Treat motors as simple resistors
-                entities.Add(new VoltageSource("V" + name, mid, start, 0f));
-                entities.Add(new Resistor(name, mid, end, MotorResistance));
-                break;
-            case CircuitComponentType.Balloon:
-                // Treat balloons as simple resistors
-                entities.Add(new VoltageSource("V" + name, mid, start, 0f));
-                entities.Add(new Resistor(name, mid, end, BalloonResistance));
-                break;
-            case CircuitComponentType.Flute:
-                // Treat flutes as simple resistors
-                entities.Add(new VoltageSource("V" + name, mid, start, 0f));
-                entities.Add(new Resistor(name, mid, end, FluteResistance));
-                break;
-            case CircuitComponentType.Wire:
-            case CircuitComponentType.Switch:
-            case CircuitComponentType.Timer:
-            case CircuitComponentType.Button:
-            default:
-                // Treat all types of wires and switches as lossless transmission lines
-                entities.Add(new VoltageSource("V" + name, mid, start, 0f));
-                entities.Add(new LosslessTransmissionLine(name, mid, end, end, mid));
-                break;
+            // If this is the first battery we are adding, make sure one of 
+            // the ends is specified as ground, or "0" Volt point of reference.
+            if (entities.Count == 0)
+            {
+                entities.Add(new VoltageSource("V" + name, start, "0", 0f));
+                entities.Add(new VoltageSource(name, "0", end, battery.BatteryVoltage));
+            }
+            else
+            {
+                entities.Add(new VoltageSource("V" + name, start, mid, 0f));
+                entities.Add(new VoltageSource(name, mid, end, battery.BatteryVoltage));
+            }
+        }
+        else if (component is IResistor resistor)
+        {
+            entities.Add(new VoltageSource("V" + name, mid, start, 0f));
+            entities.Add(new Resistor(name, mid, end, resistor.Resistance));
+        }
+        else if (component is IConductor)
+        {
+            // All normal conductors (wires, switches, etc.) are considered lossless
+            entities.Add(new VoltageSource("V" + name, mid, start, 0f));
+            entities.Add(new LosslessTransmissionLine(name, mid, end, end, mid));
+        }
+        else
+        {
+            Debug.Log("Unrecognized component: " + name);
         }
     }
 
