@@ -149,7 +149,7 @@ public class Button : CircuitComponent, IConductor
 
         // If we don't have a significant positive current, then we are inactive, even if
         // we are technically part of an active circuit
-        if (current <= 0.0000001)
+        if (!IsCurrentSignificant())
         {
             IsActive = false;
             DeactivateElectrons();

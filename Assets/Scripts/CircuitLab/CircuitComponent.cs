@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum LabelAlignment { Top, Bottom, Center };
+
 public class CircuitComponent : MonoBehaviour
 {
     // Public members set in Unity Object Inspector
@@ -19,7 +21,10 @@ public class CircuitComponent : MonoBehaviour
     protected bool IsShortCircuit { get; set; }
     protected double Voltage { get; set; }
     protected double Current { get; set; }
-    
+
+    const double SignificantCurrent = 0.0000001;
+    const float LabelOffset = 0.022f;
+
     protected CircuitComponent()
     {
         IsPlaced = false;
@@ -68,6 +73,11 @@ public class CircuitComponent : MonoBehaviour
     public virtual void SetCurrent(double current)
     {
         Current = current;
+    }
+
+    protected bool IsCurrentSignificant()
+    {
+        return (Current > SignificantCurrent);
     }
 
     // Toggle the state of a binary component (for example, a switch)
@@ -119,6 +129,42 @@ public class CircuitComponent : MonoBehaviour
 
         source.Stop();
         source.Play();
+    }
+
+    protected void RotateLabel(GameObject label, LabelAlignment alignment)
+    {
+        var rotation = label.transform.localEulerAngles;
+        var position = label.transform.localPosition;
+
+        switch (Direction)
+        {
+            case Direction.North:
+            case Direction.East:
+                rotation.z = -90f;
+                position.x = alignment switch
+                {
+                    LabelAlignment.Top => -LabelOffset,
+                    LabelAlignment.Bottom => LabelOffset,
+                    _ => 0
+                };
+                break;
+            case Direction.South:
+            case Direction.West:
+                rotation.z = 90f;
+                position.x = alignment switch
+                {
+                    LabelAlignment.Top => LabelOffset,
+                    LabelAlignment.Bottom => -LabelOffset,
+                    _ => 0
+                }; break;
+            default:
+                Debug.Log("Unrecognized direction!");
+                break;
+        }
+
+        // Apply label positioning
+        label.transform.localEulerAngles = rotation;
+        label.transform.localPosition = position;
     }
 }
 

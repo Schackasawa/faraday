@@ -49,35 +49,9 @@ public class Motor : CircuitComponent, IResistor
         // Set resistance label text
         labelResistanceText.text = Resistance.ToString("0.#") + "Ω";
 
-        // Make sure label is right side up
-        var rotationResistance = labelResistance.transform.localEulerAngles;
-        var positionResistance = labelResistance.transform.localPosition;
-        var rotationCurrent = labelCurrent.transform.localEulerAngles;
-        var positionCurrent = labelCurrent.transform.localPosition;
-        switch (Direction)
-        {
-            case Direction.North:
-            case Direction.East:
-                rotationResistance.z = rotationCurrent.z = -90f;
-                positionResistance.x = -0.022f;
-                positionCurrent.x = 0.022f;
-                break;
-            case Direction.South:
-            case Direction.West:
-                rotationResistance.z = rotationCurrent.z = 90f;
-                positionResistance.x = 0.022f;
-                positionCurrent.x = -0.022f;
-                break;
-            default:
-                Debug.Log("Unrecognized direction!");
-                break;
-        }
-
-        // Apply label positioning
-        labelResistance.transform.localEulerAngles = rotationResistance;
-        labelResistance.transform.localPosition = positionResistance;
-        labelCurrent.transform.localEulerAngles = rotationCurrent;
-        labelCurrent.transform.localPosition = positionCurrent;
+        // Make sure labels are right side up
+        RotateLabel(labelResistance, LabelAlignment.Top);
+        RotateLabel(labelCurrent, LabelAlignment.Bottom);
     }
 
     public override void SetCurrent(double current)
@@ -86,7 +60,7 @@ public class Motor : CircuitComponent, IResistor
 
         // If we don't have a significant positive current, then we are inactive, even if
         // we are technically part of an active circuit
-        if (current <= 0.0000001)
+        if (!IsCurrentSignificant())
         {
             IsActive = false;
 

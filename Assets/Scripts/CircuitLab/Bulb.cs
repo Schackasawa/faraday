@@ -28,11 +28,9 @@ public class Bulb : CircuitComponent, IResistor
 
     protected override void Update ()
     {
-        bool sufficientCurrent = (Current > 0.0000001);
-
         // Show/hide the labels
-        labelResistance.gameObject.SetActive(IsActive && sufficientCurrent && Lab.showLabels);
-        labelCurrent.gameObject.SetActive(IsActive && sufficientCurrent && Lab.showLabels);
+        labelResistance.gameObject.SetActive(IsActive && IsCurrentSignificant() && Lab.showLabels);
+        labelCurrent.gameObject.SetActive(IsActive && IsCurrentSignificant() && Lab.showLabels);
     }
 
     public override void SetActive(bool isActive, bool isForward)
@@ -52,35 +50,9 @@ public class Bulb : CircuitComponent, IResistor
         // Set resistance label text
         labelResistanceText.text = Resistance.ToString("0.#") + "Ω";
 
-        // Make sure label is right side up
-        var rotationResistance = labelResistance.transform.localEulerAngles;
-        var positionResistance = labelResistance.transform.localPosition;
-        var rotationCurrent = labelCurrent.transform.localEulerAngles;
-        var positionCurrent = labelCurrent.transform.localPosition;
-        switch (Direction)
-        {
-            case Direction.North:
-            case Direction.East:
-                rotationResistance.z = rotationCurrent.z = -90f;
-                positionResistance.x = -0.022f;
-                positionCurrent.x = 0.022f;
-                break;
-            case Direction.South:
-            case Direction.West:
-                rotationResistance.z = rotationCurrent.z = 90f;
-                positionResistance.x = 0.022f;
-                positionCurrent.x = -0.022f;
-                break;
-            default:
-                Debug.Log("Unrecognized direction!");
-                break;
-        }
-
-        // Apply label positioning
-        labelResistance.transform.localEulerAngles = rotationResistance;
-        labelResistance.transform.localPosition = positionResistance;
-        labelCurrent.transform.localEulerAngles = rotationCurrent;
-        labelCurrent.transform.localPosition = positionCurrent;
+        // Make sure labels are right side up
+        RotateLabel(labelResistance, LabelAlignment.Top);
+        RotateLabel(labelCurrent, LabelAlignment.Bottom);
     }
 
     private void DeactivateLight()

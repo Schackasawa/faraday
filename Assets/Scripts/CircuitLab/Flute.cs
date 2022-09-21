@@ -49,37 +49,10 @@ protected override void Update ()
         // Set resistance label text
         labelResistanceText.text = Resistance.ToString("0.#") + "Ω";
 
-        // Make sure label is right side up
-        var rotationResistance = labelResistance.transform.localEulerAngles;
-        var positionResistance = labelResistance.transform.localPosition;
-        var rotationCurrent = labelCurrent.transform.localEulerAngles;
-        var positionCurrent = labelCurrent.transform.localPosition;
-        var rotationNote = labelNote.transform.localEulerAngles;
-        switch (Direction)
-        {
-            case Direction.North:
-            case Direction.East:
-                rotationResistance.z = rotationCurrent.z = rotationNote.z = -90f;
-                positionResistance.x = -0.022f;
-                positionCurrent.x = 0.022f;
-                break;
-            case Direction.South:
-            case Direction.West:
-                rotationResistance.z = rotationCurrent.z = rotationNote.z = 90f;
-                positionResistance.x = 0.022f;
-                positionCurrent.x = -0.022f;
-                break;
-            default:
-                Debug.Log("Unrecognized direction!");
-                break;
-        }
-
-        // Apply label positioning
-        labelResistance.transform.localEulerAngles = rotationResistance;
-        labelResistance.transform.localPosition = positionResistance;
-        labelCurrent.transform.localEulerAngles = rotationCurrent;
-        labelCurrent.transform.localPosition = positionCurrent;
-        labelNote.transform.localEulerAngles = rotationNote;
+        // Make sure labels are right side up
+        RotateLabel(labelResistance, LabelAlignment.Top);
+        RotateLabel(labelCurrent, LabelAlignment.Bottom);
+        RotateLabel(labelNote, LabelAlignment.Center);
     }
 
     public override void SetCurrent(double current)

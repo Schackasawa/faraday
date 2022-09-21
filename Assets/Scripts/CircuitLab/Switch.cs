@@ -21,10 +21,8 @@ public class Switch : CircuitComponent, IConductor
 
     protected override void Update ()
     {
-        bool sufficientCurrent = (Current > 0.0000001);
-
         // Show/hide the labels
-        bool showLabels = Lab.showLabels && IsActive && sufficientCurrent && !IsShortCircuit;
+        bool showLabels = Lab.showLabels && IsActive && IsCurrentSignificant() && !IsShortCircuit;
         labelVoltage.gameObject.SetActive(showLabels);
         labelCurrent.gameObject.SetActive(showLabels);
     }
@@ -33,35 +31,9 @@ public class Switch : CircuitComponent, IConductor
     {
         IsActive = isActive;
 
-        // Make sure label is right side up
-        var rotationVoltage = labelVoltage.transform.localEulerAngles;
-        var positionVoltage = labelVoltage.transform.localPosition;
-        var rotationCurrent = labelCurrent.transform.localEulerAngles;
-        var positionCurrent = labelCurrent.transform.localPosition;
-        switch (Direction)
-        {
-            case Direction.North:
-            case Direction.East:
-                rotationVoltage.z = rotationCurrent.z = -90f;
-                positionVoltage.x = -0.022f;
-                positionCurrent.x = 0.022f;
-                break;
-            case Direction.South:
-            case Direction.West:
-                rotationVoltage.z = rotationCurrent.z = 90f;
-                positionVoltage.x = 0.022f;
-                positionCurrent.x = -0.022f;
-                break;
-            default:
-                Debug.Log("Unrecognized direction!");
-                break;
-        }
-
-        // Apply label positioning
-        labelVoltage.transform.localEulerAngles = rotationVoltage;
-        labelVoltage.transform.localPosition = positionVoltage;
-        labelCurrent.transform.localEulerAngles = rotationCurrent;
-        labelCurrent.transform.localPosition = positionCurrent;
+        // Make sure labels are right side up
+        RotateLabel(labelVoltage, LabelAlignment.Top);
+        RotateLabel(labelCurrent, LabelAlignment.Bottom);
     }
 
     public override void SetShortCircuit(bool isShortCircuit, bool isForward)
