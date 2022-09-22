@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Timer : CircuitComponent, IConductor
+public class Timer : CircuitComponent, IConductor, IDynamic
 {
     // Public members set in Unity Object Inspector
     public GameObject pivot;
@@ -21,6 +21,8 @@ public class Timer : CircuitComponent, IConductor
     private bool ticking = false;
     private DateTime lastSwitch;
     private int lastTimeoutSeconds;
+    private bool registered = false;
+    private bool toggled = false;
 
     public Timer()
     {
@@ -29,8 +31,24 @@ public class Timer : CircuitComponent, IConductor
         lastTimeoutSeconds = timeoutSeconds;
     }
 
+    ~Timer()
+    {
+        if (registered)
+        {
+            // Remove ourselves from the circuit lab's list of dynamic objects
+            Lab.UnregisterDynamicComponent(this);
+        }
+    }
+
     protected override void Update ()
     {
+        if (!registered)
+        {
+            // Register as a dynamic component so we'll get coordinated UpdateState calls
+            registered = true;
+            Lab.RegisterDynamicComponent(this);
+        }
+
         // Show/hide the labels
         bool showLabels = Lab.showLabels && IsActive && !IsShortCircuit;
         labelVoltage.gameObject.SetActive(showLabels);
@@ -53,10 +71,8 @@ public class Timer : CircuitComponent, IConductor
         // Cancel any outstanding timeouts
         CancelInvoke();
 
-        // Stop ticking and make sure we're in the closed position
+        // Stop ticking
         ticking = false;
-        IsClosed = true;
-        RotatePivot();
     }
 
     public override void SetActive(bool isActive, bool isForward)
@@ -98,14 +114,12 @@ public class Timer : CircuitComponent, IConductor
         // Set the blade to the proper position by rotating the pivot
         RotatePivot();
 
-        // Play the switch sound
-        StartCoroutine(PlaySound(switchSound, 0f));
-
         // Set a new callback to toggle again
         StartTimer();
 
-        // Trigger a new simulation since we may have just closed or opened a circuit
-        Lab.SimulateCircuit();
+        // Remember that we've toggled since the last UpdateState() call,
+        // so we can tell the circuit lab it needs to start a new simulation.
+        toggled = true;
     }
 
     private void RotatePivot()
@@ -113,6 +127,9 @@ public class Timer : CircuitComponent, IConductor
         var rotation = pivot.transform.localEulerAngles;
         rotation.z = IsClosed ? 0 : 90f;
         pivot.transform.localEulerAngles = rotation;
+
+        // Play the switch sound
+        StartCoroutine(PlaySound(switchSound, 0f));
     }
 
     private void StartTimer()
@@ -123,10 +140,34 @@ public class Timer : CircuitComponent, IConductor
         Invoke("Toggle", timeoutSeconds);
     }
 
+    public bool UpdateState(int numActiveCircuits)
+    {
+        // If there are any active circuits on the board, start our timer. This allows the user
+        // to set up dynamic circuits with multiple timed switches that all become active at once.
+        if (IsPlaced && numActiveCircuits > 0 && !ticking)
+        {
+            StartTimer();
+        }
+
+        // If the switch has toggled since our last UpdateState call, return true
+        // to let the circuit lab know that it needs to run an updated simulation.
+        bool simulate = toggled;
+        toggled = false;
+        return simulate;
+    }
+
     public override void Adjust()
     {
         // Decrement the timeout value, wrapping back to the maximum value after 1
         timeoutSeconds = (timeoutSeconds > 1) ? (timeoutSeconds - 1) : maxTimeoutSeconds;
+
+        // If we wrapped, also toggle the switch state. This allows the user to setup a timer in
+        // the open or closed state before a circuit is completed and the timer starts ticking.
+        if (timeoutSeconds == maxTimeoutSeconds)
+        {
+            IsClosed = !IsClosed;
+            RotatePivot();
+        }
     }
 
     public override void SetVoltage(double voltage)

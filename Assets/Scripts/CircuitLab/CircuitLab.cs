@@ -31,6 +31,11 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
     float yHandleStart = 0f;
     float yTableStart = 0f;
 
+    // Dynamic components that may change state on their own. Keeping a list of these allows us to
+    // avoid redundant Simulate() calls when many components are changing state around the same time.
+    List<IDynamic> dynamicComponents = new List<IDynamic>();
+    int numActiveCircuits = 0;
+
     void Start()
     {
         // Record the initial height of the handle so we can move the whole board when the handle moves
@@ -64,6 +69,21 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         // Get the handle's current y position and move the entire circuit lab to match
         float yHandleCurrent = handle.transform.position.y;
         transform.localPosition = new Vector3(transform.localPosition.x, yTableStart + (yHandleCurrent - yHandleStart), transform.localPosition.z);
+
+        // Update all dynamic components
+        if (dynamicComponents.Count > 0)
+        {
+            bool simulate = false;
+            foreach (IDynamic component in dynamicComponents)
+            {
+                if (component.UpdateState(numActiveCircuits))
+                    simulate = true;
+            }
+
+            // If any of the dynamic components requested a new simulation, trigger it once
+            if (simulate)
+                SimulateCircuit();
+        }
     }
 
     public void ToggleLabels()
@@ -372,9 +392,20 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         }
     }
 
+    public void RegisterDynamicComponent(IDynamic component)
+    {
+        dynamicComponents.Add(component);
+    }
+
+    public void UnregisterDynamicComponent(IDynamic component)
+    {
+        dynamicComponents.Remove(component);
+    }
+
     public void SimulateCircuit()
     {
         //Debug.Log("SIMULATE START");
+        numActiveCircuits = 0;
 
         // Bump the generation number for this circuit simulation
         int gen = ++board.Generation;
@@ -448,6 +479,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
             // Case 2: A normal circuit has been completed on this battery
             else if (battery.Generation == gen)
             {
+                numActiveCircuits++;
                 var ssCircuit = new Circuit(entities);
 
                 // Create an Operating Point Analysis for the circuit

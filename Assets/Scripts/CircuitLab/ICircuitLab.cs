@@ -8,6 +8,8 @@ public interface ICircuitLab
     int GetFreeComponentSlots(Point start, int length);
     bool IsSlotFree(Point start, Point end, int length);
     void BlockPegs(Point start, Point end, bool block);
+    void RegisterDynamicComponent(IDynamic component);
+    void UnregisterDynamicComponent(IDynamic component);
     void SimulateCircuit();
     void ToggleLabels();
     void Reset();

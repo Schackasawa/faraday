@@ -36,7 +36,7 @@ public class TimerFace : MonoBehaviour
                 StartCoroutine(PlaySound(timerAdjustmentSound, 0f));
 
                 cooldownActive = true;
-                Invoke("Cooldown", 0.5f);
+                Invoke("Cooldown", 0.3f);
             }
         }
     }
