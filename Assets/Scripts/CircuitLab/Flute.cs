@@ -29,7 +29,7 @@ public class Flute : CircuitComponent, IResistor
         Resistance = 2500f;
     }
 
-protected override void Update ()
+    protected override void Update ()
     {
         // Show/hide the labels
         labelResistance.gameObject.SetActive(IsActive && Lab.showLabels);
@@ -38,7 +38,7 @@ protected override void Update ()
 
     public override void SetActive(bool isActive, bool isForward)
     {
-        if (!IsActive && isActive && (Current > 0))
+        if (!IsActive && isActive)
         {
             // Play the note once when we are first activated
             PlayFlute();
