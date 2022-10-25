@@ -16,6 +16,7 @@ TagManager:
   - Timer
   - Flute
   - Button
+  - Solar
   layers:
   - Default
   - TransparentFX
