@@ -35,17 +35,10 @@ public class Bulb : CircuitComponent, IResistor
 
     public override void SetActive(bool isActive, bool isForward)
     {
-        if (!IsActive && isActive)
-        {
-            ActivateLight();
-        }
-
-        if (IsActive && !isActive)
-        {
-            DeactivateLight();
-        }
-
         IsActive = isActive;
+
+        if (!isActive)
+            DeactivateLight();
 
         // Set resistance label text
         labelResistanceText.text = Resistance.ToString("0.#") + "Ω";
@@ -65,31 +58,38 @@ public class Bulb : CircuitComponent, IResistor
     {
         // Heat up the filament by activating the emission
         filament.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+
+        // Set the filament emission color and intensity
+        Color baseColor = colors[emissionColorIdx];
+        Color finalColor = baseColor * Mathf.Pow(2, intensity);
+        filament.GetComponent<Renderer>().material.SetColor("_EmissionColor", finalColor);
     }
 
     public override void SetCurrent(double current)
     {
         Current = current;
 
-        // Update label text
-        labelCurrentText.text = (current * 1000f).ToString("0.#") + "mA";
+        // If we don't have a significant positive current, then we are inactive, even if
+        // we are technically part of an active circuit
+        if (!IsCurrentSignificant())
+        {
+            IsActive = false;
+            DeactivateLight();
+        }
+        else
+        {
+            // Update label text
+            labelCurrentText.text = (current * 1000f).ToString("0.#") + "mA";
 
-        // Calculate light intensity based on current
-        float maxCurrent = 0.01f;
-        float maxIntensity = 5.0f;
-        float minIntensity = 3.0f;
-        float pctCurrent = ((float)current > maxCurrent ? maxCurrent : (float)current) / maxCurrent;
-        intensity = (pctCurrent * (maxIntensity - minIntensity)) + minIntensity;
+            // Calculate light intensity based on current
+            float maxCurrent = 0.01f;
+            float maxIntensity = 5.0f;
+            float minIntensity = 3.0f;
+            float pctCurrent = ((float)current > maxCurrent ? maxCurrent : (float)current) / maxCurrent;
+            intensity = (pctCurrent * (maxIntensity - minIntensity)) + minIntensity;
 
-        ActivateFilament();
-    }
-
-    public void ActivateFilament()
-    {
-        // Set the filament emission color and intensity
-        Color baseColor = colors[emissionColorIdx];
-        Color finalColor = baseColor * Mathf.Pow(2, intensity);
-        filament.GetComponent<Renderer>().material.SetColor("_EmissionColor", finalColor);
+            ActivateLight();
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -99,7 +99,7 @@ public class Bulb : CircuitComponent, IResistor
         {
             // Switch the emission color to the next one in the list
             emissionColorIdx = ++emissionColorIdx % colors.Length;
-            ActivateFilament();
+            ActivateLight();
 
             StartCoroutine(PlaySound(colorChangeAudio, 0f));
 
