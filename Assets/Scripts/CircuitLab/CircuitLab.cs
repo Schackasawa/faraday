@@ -410,11 +410,11 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         // Bump the generation number for this circuit simulation
         int gen = ++board.Generation;
 
-        // First, search for all batteries so we know where to start
+        // First, search for all batteries (and solar panels) so we know where to start
         List<PlacedComponent> batteries = new List<PlacedComponent>();
         foreach (PlacedComponent component in board.Components)
         {
-            if (component.Component is IBattery)
+            if (component.Component is IBattery || component.Component is ISolar)
             {
                 batteries.Add(component);
             }
@@ -740,7 +740,7 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
         // also have a 0 voltage source added next to it to act as an ammeter.
         if (component is IBattery battery)
         {
-            // If this is the first battery we are adding, make sure one of 
+            // If this is the first voltage source we are adding, make sure one of 
             // the ends is specified as ground, or "0" Volt point of reference.
             if (entities.Count == 0)
             {
@@ -752,6 +752,27 @@ public class CircuitLab : MonoBehaviour, ICircuitLab
                 entities.Add(new VoltageSource("V" + name, start, mid, 0f));
                 entities.Add(new VoltageSource(name, mid, end, battery.BatteryVoltage));
             }
+        }
+        else if (component is ISolar solar)
+        {
+            string mid2 = name + "2";
+
+            // If this is the first voltage source we are adding, make sure one of 
+            // the ends is specified as ground, or "0" Volt point of reference.
+            if (entities.Count == 0)
+            {
+                entities.Add(new VoltageSource("V" + name, start, "0", 0f));
+                entities.Add(new VoltageSource(name, "0", mid2, solar.SolarVoltage));
+            }
+            else
+            {
+                entities.Add(new VoltageSource("V" + name, start, mid, 0f));
+                entities.Add(new VoltageSource(name, mid, mid2, solar.SolarVoltage));
+            }
+
+            // Also add a resistor to simulate the way current changes with the
+            // angle to the sun even though voltage may be the same.
+            entities.Add(new Resistor("R" + name, mid2, end, solar.SolarResistance));
         }
         else if (component is IResistor resistor)
         {

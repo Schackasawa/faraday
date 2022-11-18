@@ -17954,6 +17954,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68fa8739ba4c8634d8a73d398d52639c, type: 3}
+--- !u!1 &1529200020 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 264331707870919944, guid: 68fa8739ba4c8634d8a73d398d52639c, type: 3}
+  m_PrefabInstance: {fileID: 1529200019}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1529200021 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1353470471114239915, guid: 68fa8739ba4c8634d8a73d398d52639c, type: 3}
+  m_PrefabInstance: {fileID: 1529200019}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529200020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1529200022 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3521556661554089946, guid: 68fa8739ba4c8634d8a73d398d52639c, type: 3}
@@ -17990,6 +18006,8 @@ MonoBehaviour:
   Lab: {fileID: 827400520}
   labelWattage: {fileID: 1529200022}
   labelWattageText: {fileID: 1529200023}
+  labelVoltage: {fileID: 1529200020}
+  labelVoltageText: {fileID: 1529200021}
   panel: {fileID: 1423995520}
   cell: {fileID: 1587825490}
   rotationIncrement: 90
